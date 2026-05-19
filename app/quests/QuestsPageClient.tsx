@@ -1,0 +1,149 @@
+'use client';
+
+import { useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { useQuests } from '@/hooks/useQuests';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { QuestTable } from '@/components/quest/QuestTable';
+import { QuestCard } from '@/components/quest/QuestCard';
+import { QuestFilters } from '@/components/quest/QuestFilters';
+import { SkeletonQuestRow, SkeletonQuestCard } from '@/components/shared/SkeletonCard';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { ChevronLeft, ChevronRight, Inbox } from 'lucide-react';
+import type { QuestStatus, QuestListParams } from '@/types';
+
+const PAGE_SIZE = 20;
+
+export function QuestsPageClient() {
+  const isMobile = useIsMobile();
+  const [search, setSearch] = useState('');
+  const [status, setStatus] = useState<QuestStatus | 'all'>('all');
+  const [page, setPage] = useState(1);
+
+  const params: QuestListParams = {
+    page,
+    pageSize: PAGE_SIZE,
+    search,
+    status,
+    sortBy: 'updatedAt',
+    sortDir: 'desc',
+  };
+
+  const { data, isLoading, isError } = useQuests(params);
+
+  const quests = data?.data ?? [];
+  const total = data?.meta?.total ?? 0;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  const handleSearch = useCallback((v: string) => {
+    setSearch(v);
+    setPage(1);
+  }, []);
+
+  const handleStatus = useCallback((v: QuestStatus | 'all') => {
+    setStatus(v);
+    setPage(1);
+  }, []);
+
+  return (
+    <div className="space-y-5">
+      {/* Page header */}
+      <div>
+        <motion.h1
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-2xl font-bold text-[#F3F4F6] mb-1"
+          style={{ fontFamily: 'var(--font-space-grotesk)' }}
+        >
+          Quest{' '}
+          <span className="gradient-text">Vault</span>
+        </motion.h1>
+        <p className="text-sm text-[#6B7280]">
+          {isLoading ? 'Loading…' : `${total} quest${total !== 1 ? 's' : ''} in the archive`}
+        </p>
+      </div>
+
+      {/* Filters */}
+      <div className="sticky top-[57px] z-20 py-3 -mx-4 px-4 md:-mx-6 md:px-6"
+        style={{
+          background: 'rgba(11,16,32,0.92)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255,255,255,0.04)',
+        }}
+      >
+        <QuestFilters
+          search={search}
+          onSearchChange={handleSearch}
+          status={status}
+          onStatusChange={handleStatus}
+        />
+      </div>
+
+      {/* Content */}
+      {isError ? (
+        <EmptyState
+          title="Failed to load quests"
+          description="Check your Airtable configuration and try again."
+          icon={<Inbox className="h-12 w-12" />}
+        />
+      ) : isLoading ? (
+        isMobile ? (
+          <div className="grid gap-3">
+            {Array.from({ length: 6 }).map((_, i) => <SkeletonQuestCard key={i} />)}
+          </div>
+        ) : (
+          <div className="space-y-0 rounded-xl border border-[rgba(255,255,255,0.06)] overflow-hidden">
+            {Array.from({ length: 8 }).map((_, i) => <SkeletonQuestRow key={i} />)}
+          </div>
+        )
+      ) : quests.length === 0 ? (
+        <EmptyState
+          title="No quests found"
+          description={search ? `No results for "${search}"` : 'No quests match the current filter.'}
+          icon={<Inbox className="h-12 w-12" />}
+        />
+      ) : isMobile ? (
+        <div className="grid gap-3">
+          {quests.map((q, i) => <QuestCard key={q.id} quest={q} index={i} />)}
+        </div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <QuestTable quests={quests} />
+        </motion.div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
+          <span className="text-xs text-[#6B7280]">
+            Page {page} of {totalPages} · {total} total
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#F3F4F6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#F3F4F6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
+              aria-label="Next page"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
