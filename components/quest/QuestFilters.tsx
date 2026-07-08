@@ -6,9 +6,9 @@ import type { QuestStatus } from '@/types';
 const STATUS_OPTIONS: { label: string; value: QuestStatus | 'all' }[] = [
   { label: 'All', value: 'all' },
   { label: 'Active', value: 'Active' },
+  { label: 'Pending', value: 'Pending' },
+  { label: 'Completed', value: 'Completed' },
   { label: 'Expired', value: 'Expired' },
-  { label: 'Draft', value: 'Draft' },
-  { label: 'Archived', value: 'Archived' },
 ];
 
 interface Props {
@@ -29,7 +29,7 @@ export function QuestFilters({ search, onSearchChange, status, onStatusChange }:
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search quests…"
-          className="w-full rounded-lg py-2 ps-9 pe-9 text-sm bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.06)] text-[#F3F4F6] placeholder:text-[#4B5563] outline-none focus:border-[rgba(161,0,255,0.4)] transition-colors"
+          className="w-full rounded-lg py-2 ps-9 pe-9 text-sm bg-[rgba(243,239,248,0.04)] border border-[rgba(243,239,248,0.06)] text-[#f3eff8] placeholder:text-[#4B5563] outline-none focus:border-[rgba(48,145,255,0.4)] transition-colors"
         />
         {search && (
           <button
@@ -54,14 +54,14 @@ export function QuestFilters({ search, onSearchChange, status, onStatusChange }:
               style={
                 isActive
                   ? {
-                      background: 'linear-gradient(135deg, rgba(255,0,212,0.15), rgba(161,0,255,0.15))',
-                      color: '#FF00D4',
-                      border: '1px solid rgba(255,0,212,0.3)',
+                      background: 'linear-gradient(135deg, rgba(255,48,194,0.15), rgba(48,145,255,0.15))',
+                      color: '#ff30c2',
+                      border: '1px solid rgba(255,48,194,0.3)',
                     }
                   : {
-                      background: 'rgba(255,255,255,0.03)',
+                      background: 'rgba(243,239,248,0.03)',
                       color: '#6B7280',
-                      border: '1px solid rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(243,239,248,0.06)',
                     }
               }
             >

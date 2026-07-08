@@ -28,43 +28,94 @@ export function formatDateRange(start?: string, end?: string): string {
   return `${formatDate(start)} – ${formatDate(end)}`;
 }
 
-export function getStatusColor(status: QuestStatus): {
-  bg: string;
-  text: string;
-  border: string;
-  glow: string;
-} {
-  switch (status) {
-    case 'Active':
-      return {
-        bg: 'rgba(255, 0, 212, 0.1)',
-        text: '#FF00D4',
-        border: 'rgba(255, 0, 212, 0.3)',
-        glow: 'rgba(255, 0, 212, 0.2)',
-      };
-    case 'Expired':
-      return {
-        bg: 'rgba(91, 140, 255, 0.1)',
-        text: '#5B8CFF',
-        border: 'rgba(91, 140, 255, 0.3)',
-        glow: 'rgba(91, 140, 255, 0.2)',
-      };
-    case 'Draft':
-      return {
-        bg: 'rgba(107, 114, 128, 0.1)',
-        text: '#9CA3AF',
-        border: 'rgba(107, 114, 128, 0.3)',
-        glow: 'transparent',
-      };
-    case 'Archived':
-      return {
-        bg: 'rgba(107, 114, 128, 0.08)',
-        text: '#6B7280',
-        border: 'rgba(107, 114, 128, 0.2)',
-        glow: 'transparent',
-      };
-  }
+/**
+ * A quest's end date has passed (end of that calendar day is behind us).
+ */
+export function isPastEndDate(endDate?: string): boolean {
+  if (!endDate) return false;
+  const end = new Date(endDate);
+  if (Number.isNaN(end.getTime())) return false;
+  // Treat the whole end day as still-valid: expire the day after.
+  end.setHours(23, 59, 59, 999);
+  return end.getTime() < Date.now();
 }
+
+/**
+ * Derive the effective status. If the end date has passed and the quest
+ * isn't already finalized (Completed/Archived), it is shown as Expired.
+ */
+export function computeQuestStatus(
+  rawStatus: QuestStatus,
+  endDate?: string
+): QuestStatus {
+  const finalized = rawStatus === 'Completed' || rawStatus === 'Archived';
+  if (!finalized && isPastEndDate(endDate)) return 'Expired';
+  return rawStatus;
+}
+
+export function isExpiredStatus(status: QuestStatus): boolean {
+  return typeof status === 'string' && status.toLowerCase() === 'expired';
+}
+
+type StatusStyle = { bg: string; text: string; border: string; glow: string };
+
+const STATUS_STYLES: Record<string, StatusStyle> = {
+  // Neon magenta — live / in-progress states
+  active: {
+    bg: 'rgba(255, 0, 212, 0.1)',
+    text: '#FF00D4',
+    border: 'rgba(255, 0, 212, 0.3)',
+    glow: 'rgba(255, 0, 212, 0.2)',
+  },
+  // Amber — awaiting action
+  pending: {
+    bg: 'rgba(255, 176, 32, 0.1)',
+    text: '#FFB020',
+    border: 'rgba(255, 176, 32, 0.3)',
+    glow: 'rgba(255, 176, 32, 0.2)',
+  },
+  // Green — done successfully
+  completed: {
+    bg: 'rgba(0, 214, 143, 0.1)',
+    text: '#00D68F',
+    border: 'rgba(0, 214, 143, 0.3)',
+    glow: 'rgba(0, 214, 143, 0.2)',
+  },
+  // Soft blue — time-lapsed
+  expired: {
+    bg: 'rgba(91, 140, 255, 0.1)',
+    text: '#5B8CFF',
+    border: 'rgba(91, 140, 255, 0.3)',
+    glow: 'rgba(91, 140, 255, 0.2)',
+  },
+  draft: {
+    bg: 'rgba(107, 114, 128, 0.1)',
+    text: '#9CA3AF',
+    border: 'rgba(107, 114, 128, 0.3)',
+    glow: 'transparent',
+  },
+  archived: {
+    bg: 'rgba(107, 114, 128, 0.08)',
+    text: '#6B7280',
+    border: 'rgba(107, 114, 128, 0.2)',
+    glow: 'transparent',
+  },
+};
+
+const DEFAULT_STATUS_STYLE: StatusStyle = {
+  bg: 'rgba(156, 163, 175, 0.1)',
+  text: '#9CA3AF',
+  border: 'rgba(156, 163, 175, 0.3)',
+  glow: 'transparent',
+};
+
+export function getStatusColor(status: QuestStatus): StatusStyle {
+  if (!status) return DEFAULT_STATUS_STYLE;
+  return STATUS_STYLES[status.toLowerCase()] ?? DEFAULT_STATUS_STYLE;
+}
+
+// Which statuses render the pulsing "live" dot
+export const LIVE_STATUSES = new Set(['active', 'pending']);
 
 export function getFileTypeBadgeStyle(fileType: FileType): {
   bg: string;

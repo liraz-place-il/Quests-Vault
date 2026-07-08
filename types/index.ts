@@ -1,4 +1,11 @@
-export type QuestStatus = 'Active' | 'Expired' | 'Draft' | 'Archived';
+export type QuestStatus =
+  | 'Active'
+  | 'Pending'
+  | 'Completed'
+  | 'Expired'
+  | 'Draft'
+  | 'Archived'
+  | (string & {}); // allow any Airtable single-select value without breaking types
 export type FileType = 'PDF' | 'PNG' | 'JPG' | 'JPEG' | 'ZIP' | 'MD' | 'DOCX' | 'TXT' | 'OTHER';
 export type Locale = 'en' | 'he';
 export type Direction = 'ltr' | 'rtl';
@@ -24,6 +31,8 @@ export interface Quest {
   assetCount: number;
   categoryIds: string[];
   categories?: Category[];
+  detailsUrl?: string;
+  lateSubmissionUrl?: string;
   updatedAt: string;
   createdAt: string;
 }

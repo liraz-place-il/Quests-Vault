@@ -1,5 +1,6 @@
 import Airtable from 'airtable';
 import type { Quest, Asset, Category, QuestListParams } from '@/types';
+import { computeQuestStatus } from '@/lib/utils';
 
 function getBase() {
   if (!process.env.AIRTABLE_API_KEY) {
@@ -20,6 +21,8 @@ const CategoriesTable = () => getBase()('Categories');
 function parseQuest(record: Airtable.Record<Airtable.FieldSet>): Quest {
   const f = record.fields as Record<string, unknown>;
   const assetLinks = (f['Assets'] as string[]) ?? [];
+  const rawStatus = ((f['status'] as string) ?? 'Draft') as Quest['status'];
+  const endDate = (f['endDate'] as string) ?? undefined;
   return {
     id: record.id,
     questNumber: (f['questNumber'] as string) ?? record.id,
@@ -27,12 +30,15 @@ function parseQuest(record: Airtable.Record<Airtable.FieldSet>): Quest {
     titleHe: (f['titleHe'] as string) ?? undefined,
     description: (f['description'] as string) ?? '',
     descriptionHe: (f['descriptionHe'] as string) ?? undefined,
-    status: ((f['status'] as string) ?? 'Draft') as Quest['status'],
+    // Auto-derive Expired when the end date has passed
+    status: computeQuestStatus(rawStatus, endDate),
     startDate: (f['startDate'] as string) ?? undefined,
-    endDate: (f['endDate'] as string) ?? undefined,
+    endDate,
     creatorName: (f['creatorName'] as string) ?? 'Unknown',
     assetCount: assetLinks.length,
     categoryIds: (f['categories'] as string[]) ?? [],
+    detailsUrl: (f['detailsUrl'] as string) ?? undefined,
+    lateSubmissionUrl: (f['lateSubmissionUrl'] as string) ?? undefined,
     updatedAt: (f['updatedAt'] as string) ?? new Date().toISOString(),
     createdAt: (f['createdAt'] as string) ?? new Date().toISOString(),
   };
@@ -85,36 +91,41 @@ export async function getQuests(params: QuestListParams = {}): Promise<{
     sortDir = 'desc',
   } = params;
 
-  const filterParts: string[] = [];
-
-  if (status && status !== 'all') {
-    filterParts.push(`{status} = '${status}'`);
-  }
-
+  // Search filters on text fields (safe in Airtable formula).
+  // Status is filtered in JS below because the effective status is
+  // derived (auto-Expired), which Airtable can't compute.
+  let filterFormula = '';
   if (search.trim()) {
     const s = search.replace(/'/g, "\\'");
-    filterParts.push(
-      `OR(FIND(LOWER('${s}'), LOWER({title})), FIND(LOWER('${s}'), LOWER({questNumber})), FIND(LOWER('${s}'), LOWER({description})))`
-    );
+    filterFormula = `OR(FIND(LOWER('${s}'), LOWER({title})), FIND(LOWER('${s}'), LOWER({questNumber})), FIND(LOWER('${s}'), LOWER({description})))`;
   }
-
-  const filterFormula =
-    filterParts.length === 0
-      ? ''
-      : filterParts.length === 1
-        ? filterParts[0]
-        : `AND(${filterParts.join(', ')})`;
-
-  const airtableSortField = sortBy === 'updatedAt' ? 'updatedAt' :
-    sortBy === 'createdAt' ? 'createdAt' :
-    sortBy === 'title' ? 'title' : 'updatedAt';
 
   const records = await QuestsTable().select({
     ...(filterFormula ? { filterByFormula: filterFormula } : {}),
-    sort: [{ field: airtableSortField, direction: sortDir }],
+    // Sort by title in Airtable only (safe field); date/updatedAt sorts handled in JS below
+    ...(sortBy === 'title' ? { sort: [{ field: 'title', direction: sortDir }] } : {}),
   }).all();
 
-  const quests = records.map(parseQuest);
+  let quests = records.map(parseQuest);
+
+  // Filter by derived status in JS
+  if (status && status !== 'all') {
+    quests = quests.filter(
+      (q) => q.status.toLowerCase() === status.toLowerCase()
+    );
+  }
+
+  // JS-level sort for date fields (Airtable auto-timestamp field names vary)
+  if (sortBy !== 'title') {
+    quests = quests.sort((a, b) => {
+      const aVal = sortBy === 'status' ? a.status : (a.createdAt ?? '');
+      const bVal = sortBy === 'status' ? b.status : (b.createdAt ?? '');
+      return sortDir === 'asc'
+        ? aVal.localeCompare(bVal)
+        : bVal.localeCompare(aVal);
+    });
+  }
+
   return { quests, total: quests.length };
 }
 

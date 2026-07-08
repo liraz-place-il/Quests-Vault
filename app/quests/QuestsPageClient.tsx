@@ -52,7 +52,7 @@ export function QuestsPageClient() {
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl font-bold text-[#F3F4F6] mb-1"
+          className="text-2xl font-bold text-[#f3eff8] mb-1"
           style={{ fontFamily: 'var(--font-space-grotesk)' }}
         >
           Quest{' '}
@@ -68,7 +68,7 @@ export function QuestsPageClient() {
         style={{
           background: 'rgba(11,16,32,0.92)',
           backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(255,255,255,0.04)',
+          borderBottom: '1px solid rgba(243,239,248,0.04)',
         }}
       >
         <QuestFilters
@@ -92,7 +92,7 @@ export function QuestsPageClient() {
             {Array.from({ length: 6 }).map((_, i) => <SkeletonQuestCard key={i} />)}
           </div>
         ) : (
-          <div className="space-y-0 rounded-xl border border-[rgba(255,255,255,0.06)] overflow-hidden">
+          <div className="space-y-0 rounded-xl border border-[rgba(243,239,248,0.06)] overflow-hidden">
             {Array.from({ length: 8 }).map((_, i) => <SkeletonQuestRow key={i} />)}
           </div>
         )
@@ -126,8 +126,8 @@ export function QuestsPageClient() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#F3F4F6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
+              className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#f3eff8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              style={{ background: 'rgba(243,239,248,0.04)', border: '1px solid rgba(243,239,248,0.06)' }}
               aria-label="Previous page"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -135,8 +135,8 @@ export function QuestsPageClient() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#F3F4F6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
+              className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#f3eff8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              style={{ background: 'rgba(243,239,248,0.04)', border: '1px solid rgba(243,239,248,0.06)' }}
               aria-label="Next page"
             >
               <ChevronRight className="h-4 w-4" />

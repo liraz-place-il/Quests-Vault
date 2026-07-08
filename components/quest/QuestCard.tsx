@@ -1,10 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, Hash, ChevronRight, User } from 'lucide-react';
+import { Calendar, Hash, ChevronRight, User, ExternalLink, Clock } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
 import { useUIStore } from '@/store/ui.store';
-import { formatDateRange, truncate } from '@/lib/utils';
+import { formatDateRange, truncate, isExpiredStatus } from '@/lib/utils';
 import type { Quest } from '@/types';
 
 interface Props {
@@ -24,7 +24,7 @@ export function QuestCard({ quest, index = 0 }: Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, delay: index * 0.04 }}
       onClick={() => openQuestDrawer(quest)}
-      className="rounded-xl border border-[rgba(255,255,255,0.07)] bg-[#121826] p-4 card-hover cursor-pointer"
+      className="rounded-xl border border-[rgba(243,239,248,0.07)] bg-[#0d1638] p-4 card-hover cursor-pointer"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && openQuestDrawer(quest)}
@@ -40,7 +40,7 @@ export function QuestCard({ quest, index = 0 }: Props) {
       </div>
 
       {/* Title */}
-      <p className="text-[#F3F4F6] font-semibold text-sm leading-snug mb-2">{title}</p>
+      <p className="text-[#f3eff8] font-semibold text-sm leading-snug mb-2">{title}</p>
 
       {/* Description */}
       {description && (
@@ -62,6 +62,41 @@ export function QuestCard({ quest, index = 0 }: Props) {
           {quest.creatorName}
         </span>
       </div>
+
+      {/* Footer actions */}
+      {(quest.detailsUrl || (isExpiredStatus(quest.status) && quest.lateSubmissionUrl)) && (
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[rgba(243,239,248,0.05)]">
+          {quest.detailsUrl && (
+            <a
+              href={quest.detailsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1 text-xs font-medium text-[#3091ff] hover:underline"
+            >
+              More details
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          )}
+          {isExpiredStatus(quest.status) && quest.lateSubmissionUrl && (
+            <a
+              href={quest.lateSubmissionUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-medium ms-auto"
+              style={{
+                background: 'rgba(255, 176, 32, 0.1)',
+                color: '#FFB020',
+                border: '1px solid rgba(255, 176, 32, 0.3)',
+              }}
+            >
+              <Clock className="h-3 w-3" />
+              Late Submission
+            </a>
+          )}
+        </div>
+      )}
     </motion.div>
   );
 }

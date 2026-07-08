@@ -9,7 +9,7 @@ import { formatDate } from '@/lib/utils';
 import { Trash2, Pencil, Plus, AlertCircle } from 'lucide-react';
 import type { Quest, QuestStatus } from '@/types';
 
-const STATUSES: QuestStatus[] = ['Active', 'Expired', 'Draft', 'Archived'];
+const STATUSES: QuestStatus[] = ['Active', 'Pending', 'Completed', 'Expired', 'Draft', 'Archived'];
 
 export function AdminPageClient() {
   const { data, isLoading } = useQuests({ pageSize: 100, sortBy: 'updatedAt', sortDir: 'desc' });
@@ -36,7 +36,7 @@ export function AdminPageClient() {
           <motion.h1
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-2xl font-bold text-[#F3F4F6]"
+            className="text-2xl font-bold text-[#f3eff8]"
             style={{ fontFamily: 'var(--font-space-grotesk)' }}
           >
             Admin{' '}
@@ -46,7 +46,7 @@ export function AdminPageClient() {
         </div>
         <a
           href="/quests"
-          className="text-sm text-[#9CA3AF] hover:text-[#F3F4F6] transition-colors"
+          className="text-sm text-[#9CA3AF] hover:text-[#f3eff8] transition-colors"
         >
           ← Back to Vault
         </a>
@@ -56,13 +56,13 @@ export function AdminPageClient() {
       <div
         className="flex items-start gap-3 rounded-xl p-4 text-sm"
         style={{
-          background: 'rgba(60, 242, 255, 0.05)',
-          border: '1px solid rgba(60, 242, 255, 0.15)',
+          background: 'rgba(48, 145, 255, 0.05)',
+          border: '1px solid rgba(48, 145, 255, 0.15)',
         }}
       >
-        <AlertCircle className="h-4 w-4 text-[#3CF2FF] shrink-0 mt-0.5" />
+        <AlertCircle className="h-4 w-4 text-[#3091ff] shrink-0 mt-0.5" />
         <div>
-          <p className="text-[#3CF2FF] font-medium">Admin panel is open during development</p>
+          <p className="text-[#3091ff] font-medium">Admin panel is open during development</p>
           <p className="text-[#6B7280] mt-0.5">
             Authentication will be added in Phase 3. To manage quests and assets, you can also edit them directly in your{' '}
             <span className="text-[#9CA3AF]">Airtable base</span>.
@@ -75,14 +75,14 @@ export function AdminPageClient() {
         {[
           { label: 'Total Quests', value: quests.length },
           { label: 'Active', value: quests.filter((q) => q.status === 'Active').length },
-          { label: 'Expired', value: quests.filter((q) => q.status === 'Expired').length },
-          { label: 'Draft', value: quests.filter((q) => q.status === 'Draft').length },
+          { label: 'Pending', value: quests.filter((q) => q.status === 'Pending').length },
+          { label: 'Completed', value: quests.filter((q) => q.status === 'Completed').length },
         ].map((stat) => (
           <div
             key={stat.label}
-            className="rounded-xl border border-[rgba(255,255,255,0.07)] bg-[#121826] p-4"
+            className="rounded-xl border border-[rgba(243,239,248,0.07)] bg-[#0d1638] p-4"
           >
-            <p className="text-2xl font-bold text-[#F3F4F6]">{stat.value}</p>
+            <p className="text-2xl font-bold text-[#f3eff8]">{stat.value}</p>
             <p className="text-xs text-[#6B7280] mt-1">{stat.label}</p>
           </div>
         ))}
@@ -98,9 +98,9 @@ export function AdminPageClient() {
             onClick={() => window.alert('Quest creation form coming in Phase 2.\nFor now, add quests directly in Airtable.')}
             className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
             style={{
-              background: 'linear-gradient(135deg, rgba(255,0,212,0.15), rgba(161,0,255,0.15))',
-              color: '#FF00D4',
-              border: '1px solid rgba(255,0,212,0.25)',
+              background: 'linear-gradient(135deg, rgba(255,48,194,0.15), rgba(48,145,255,0.15))',
+              color: '#ff30c2',
+              border: '1px solid rgba(255,48,194,0.25)',
             }}
           >
             <Plus className="h-3.5 w-3.5" />
@@ -115,12 +115,12 @@ export function AdminPageClient() {
             No quests found. Add your Airtable credentials to .env.local to see data.
           </div>
         ) : (
-          <div className="rounded-xl border border-[rgba(255,255,255,0.06)] overflow-hidden">
+          <div className="rounded-xl border border-[rgba(243,239,248,0.06)] overflow-hidden">
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr
-                  className="border-b border-[rgba(255,255,255,0.06)]"
-                  style={{ background: 'rgba(255,255,255,0.02)' }}
+                  className="border-b border-[rgba(243,239,248,0.06)]"
+                  style={{ background: 'rgba(243,239,248,0.02)' }}
                 >
                   {['ID', 'Title', 'Status', 'Start', 'End', 'Assets', 'Actions'].map((h) => (
                     <th
@@ -136,13 +136,13 @@ export function AdminPageClient() {
                 {quests.map((quest) => (
                   <tr
                     key={quest.id}
-                    className="border-b border-[rgba(255,255,255,0.03)]"
+                    className="border-b border-[rgba(243,239,248,0.03)]"
                   >
                     <td className="px-4 py-2.5">
                       <span className="font-mono text-xs text-[#6B7280]">{quest.questNumber}</span>
                     </td>
                     <td className="px-4 py-2.5">
-                      <span className="text-[#F3F4F6] text-xs font-medium">{quest.title}</span>
+                      <span className="text-[#f3eff8] text-xs font-medium">{quest.title}</span>
                     </td>
                     <td className="px-4 py-2.5">
                       <select
@@ -151,8 +151,8 @@ export function AdminPageClient() {
                         disabled={updating}
                         className="text-xs rounded-lg px-2 py-1 outline-none cursor-pointer"
                         style={{
-                          background: '#1a2235',
-                          border: '1px solid rgba(255,255,255,0.08)',
+                          background: '#141e47',
+                          border: '1px solid rgba(243,239,248,0.08)',
                           color: '#9CA3AF',
                         }}
                       >

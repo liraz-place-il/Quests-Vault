@@ -24,7 +24,7 @@ export function AssetCard({ asset }: Props) {
   return (
     <>
       <div
-        className="rounded-xl border border-[rgba(255,255,255,0.07)] bg-[#121826] p-4 card-hover flex flex-col gap-3"
+        className="rounded-xl border border-[rgba(243,239,248,0.07)] bg-[#0d1638] p-4 card-hover flex flex-col gap-3"
         style={{ minHeight: 160 }}
       >
         {/* Top: file type + visibility */}
@@ -43,7 +43,7 @@ export function AssetCard({ asset }: Props) {
 
         {/* Title + description */}
         <div className="flex-1">
-          <p className="text-[#F3F4F6] font-semibold text-sm leading-snug mb-1">{title}</p>
+          <p className="text-[#f3eff8] font-semibold text-sm leading-snug mb-1">{title}</p>
           {description && (
             <p className="text-[#6B7280] text-xs leading-relaxed">{truncate(description, 100)}</p>
           )}
@@ -78,9 +78,9 @@ export function AssetCard({ asset }: Props) {
             disabled={isPending}
             className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150 active:scale-[0.97]"
             style={{
-              background: 'linear-gradient(135deg, rgba(255,0,212,0.15), rgba(161,0,255,0.15))',
-              color: '#FF00D4',
-              border: '1px solid rgba(255,0,212,0.25)',
+              background: 'linear-gradient(135deg, rgba(255,48,194,0.15), rgba(48,145,255,0.15))',
+              color: '#ff30c2',
+              border: '1px solid rgba(255,48,194,0.25)',
             }}
             aria-label={`Download ${title}`}
           >
@@ -90,10 +90,10 @@ export function AssetCard({ asset }: Props) {
 
           <button
             onClick={() => setDetailOpen(true)}
-            className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium text-[#9CA3AF] hover:text-[#F3F4F6] transition-colors duration-150"
+            className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium text-[#9CA3AF] hover:text-[#f3eff8] transition-colors duration-150"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.06)',
+              background: 'rgba(243,239,248,0.04)',
+              border: '1px solid rgba(243,239,248,0.06)',
             }}
             aria-label={`More details for ${title}`}
           >

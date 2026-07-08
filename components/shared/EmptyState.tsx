@@ -21,7 +21,7 @@ export function EmptyState({ title, description, icon, action, className }: Prop
           {icon}
         </div>
       )}
-      <p className="text-[#F3F4F6] font-medium text-base mb-1">{title}</p>
+      <p className="text-[#f3eff8] font-medium text-base mb-1">{title}</p>
       {description && (
         <p className="text-[#6B7280] text-sm max-w-xs">{description}</p>
       )}
