@@ -9,10 +9,10 @@ import {
   type SortingState,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { ChevronUp, ChevronDown, ChevronsUpDown, ExternalLink, Clock } from 'lucide-react';
+import { ChevronUp, ChevronDown, ChevronsUpDown, ExternalLink, Clock, Send } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
 import { useUIStore } from '@/store/ui.store';
-import { formatDate, truncate, isExpiredStatus } from '@/lib/utils';
+import { formatDate, truncate, isExpiredStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
 import {
   Tooltip,
   TooltipContent,
@@ -129,29 +129,41 @@ export function QuestTable({ quests }: Props) {
     }),
     col.display({
       id: 'action',
-      header: 'Action',
-      size: 130,
+      header: 'Submission',
+      size: 150,
       cell: (info) => {
         const quest = info.row.original;
-        if (!isExpiredStatus(quest.status) || !quest.lateSubmissionUrl) {
+        if (!quest.submissionUrl) {
           return <span className="text-xs text-[#4B5563]">—</span>;
         }
+        const expired = isExpiredStatus(quest.status);
         return (
           <a
-            href={quest.lateSubmissionUrl}
+            href={quest.submissionUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
+            title={expired ? LATE_SUBMISSION_HINT : undefined}
             className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-medium transition-all duration-150"
-            style={{
-              background: 'rgba(255, 176, 32, 0.1)',
-              color: '#FFB020',
-              border: '1px solid rgba(255, 176, 32, 0.3)',
-            }}
-            aria-label={`Late submission for ${quest.title}`}
+            style={
+              expired
+                ? {
+                    background: 'rgba(255, 176, 32, 0.1)',
+                    color: '#FFB020',
+                    border: '1px solid rgba(255, 176, 32, 0.3)',
+                  }
+                : {
+                    background: 'rgba(48, 145, 255, 0.1)',
+                    color: '#3091ff',
+                    border: '1px solid rgba(48, 145, 255, 0.3)',
+                  }
+            }
+            aria-label={
+              expired ? `Late submission for ${quest.title}` : `Submit ${quest.title}`
+            }
           >
-            <Clock className="h-3 w-3" />
-            Late Submission
+            {expired ? <Clock className="h-3 w-3" /> : <Send className="h-3 w-3" />}
+            {expired ? 'Late Submission' : 'Submit'}
           </a>
         );
       },

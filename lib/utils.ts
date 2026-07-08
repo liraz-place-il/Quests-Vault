@@ -57,6 +57,9 @@ export function isExpiredStatus(status: QuestStatus): boolean {
   return typeof status === 'string' && status.toLowerCase() === 'expired';
 }
 
+export const LATE_SUBMISSION_HINT =
+  'Oh, you missed the date of this quest, however, you can still complete the quest and submit it to get a personal feedback.';
+
 type StatusStyle = { bg: string; text: string; border: string; glow: string };
 
 const STATUS_STYLES: Record<string, StatusStyle> = {

@@ -3,15 +3,18 @@ import type { Quest, Asset, Category, QuestListParams } from '@/types';
 import { computeQuestStatus } from '@/lib/utils';
 
 function getBase() {
-  if (!process.env.AIRTABLE_API_KEY) {
+  const apiKey = process.env.AIRTABLE_API_KEY?.trim();
+  // Tolerate a pasted URL path like "app123.../tblXYZ..." — keep only the base id.
+  const rawBaseId = process.env.AIRTABLE_BASE_ID?.trim();
+  const baseId = rawBaseId?.match(/app[A-Za-z0-9]+/)?.[0] ?? rawBaseId;
+
+  if (!apiKey) {
     throw new Error('AIRTABLE_API_KEY is not configured. Add it to .env.local');
   }
-  if (!process.env.AIRTABLE_BASE_ID) {
+  if (!baseId) {
     throw new Error('AIRTABLE_BASE_ID is not configured. Add it to .env.local');
   }
-  return new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
-    process.env.AIRTABLE_BASE_ID
-  );
+  return new Airtable({ apiKey }).base(baseId);
 }
 
 const QuestsTable = () => getBase()('Quests');
@@ -38,7 +41,7 @@ function parseQuest(record: Airtable.Record<Airtable.FieldSet>): Quest {
     assetCount: assetLinks.length,
     categoryIds: (f['categories'] as string[]) ?? [],
     detailsUrl: (f['detailsUrl'] as string) ?? undefined,
-    lateSubmissionUrl: (f['lateSubmissionUrl'] as string) ?? undefined,
+    submissionUrl: (f['submissionUrl'] as string) ?? undefined,
     updatedAt: (f['updatedAt'] as string) ?? new Date().toISOString(),
     createdAt: (f['createdAt'] as string) ?? new Date().toISOString(),
   };

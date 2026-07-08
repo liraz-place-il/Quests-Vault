@@ -32,7 +32,7 @@ export interface Quest {
   categoryIds: string[];
   categories?: Category[];
   detailsUrl?: string;
-  lateSubmissionUrl?: string;
+  submissionUrl?: string;
   updatedAt: string;
   createdAt: string;
 }

@@ -1,10 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, Hash, ChevronRight, User, ExternalLink, Clock } from 'lucide-react';
+import { Calendar, Hash, ChevronRight, User, ExternalLink, Clock, Send } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
 import { useUIStore } from '@/store/ui.store';
-import { formatDateRange, truncate, isExpiredStatus } from '@/lib/utils';
+import { formatDateRange, truncate, isExpiredStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
 import type { Quest } from '@/types';
 
 interface Props {
@@ -64,7 +64,7 @@ export function QuestCard({ quest, index = 0 }: Props) {
       </div>
 
       {/* Footer actions */}
-      {(quest.detailsUrl || (isExpiredStatus(quest.status) && quest.lateSubmissionUrl)) && (
+      {(quest.detailsUrl || quest.submissionUrl) && (
         <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[rgba(243,239,248,0.05)]">
           {quest.detailsUrl && (
             <a
@@ -78,23 +78,35 @@ export function QuestCard({ quest, index = 0 }: Props) {
               <ExternalLink className="h-3 w-3" />
             </a>
           )}
-          {isExpiredStatus(quest.status) && quest.lateSubmissionUrl && (
-            <a
-              href={quest.lateSubmissionUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-medium ms-auto"
-              style={{
-                background: 'rgba(255, 176, 32, 0.1)',
-                color: '#FFB020',
-                border: '1px solid rgba(255, 176, 32, 0.3)',
-              }}
-            >
-              <Clock className="h-3 w-3" />
-              Late Submission
-            </a>
-          )}
+          {quest.submissionUrl && (() => {
+            const expired = isExpiredStatus(quest.status);
+            return (
+              <a
+                href={quest.submissionUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                title={expired ? LATE_SUBMISSION_HINT : undefined}
+                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-medium ms-auto"
+                style={
+                  expired
+                    ? {
+                        background: 'rgba(255, 176, 32, 0.1)',
+                        color: '#FFB020',
+                        border: '1px solid rgba(255, 176, 32, 0.3)',
+                      }
+                    : {
+                        background: 'rgba(48, 145, 255, 0.1)',
+                        color: '#3091ff',
+                        border: '1px solid rgba(48, 145, 255, 0.3)',
+                      }
+                }
+              >
+                {expired ? <Clock className="h-3 w-3" /> : <Send className="h-3 w-3" />}
+                {expired ? 'Late Submission' : 'Submit'}
+              </a>
+            );
+          })()}
         </div>
       )}
     </motion.div>

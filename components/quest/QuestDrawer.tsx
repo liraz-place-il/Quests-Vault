@@ -2,11 +2,11 @@
 
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, User, Hash, ExternalLink, Clock } from 'lucide-react';
+import { X, Calendar, User, Hash, ExternalLink, Clock, Send } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
 import { AssetGrid } from '@/components/asset/AssetGrid';
 import { useUIStore } from '@/store/ui.store';
-import { formatDateRange, isExpiredStatus } from '@/lib/utils';
+import { formatDateRange, isExpiredStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
 
 export function QuestDrawer() {
   const { activeQuest, isQuestDrawerOpen, closeQuestDrawer, locale } = useUIStore();
@@ -113,40 +113,57 @@ export function QuestDrawer() {
             )}
 
             {/* Quest-level actions */}
-            {(activeQuest.detailsUrl ||
-              (isExpiredStatus(activeQuest.status) && activeQuest.lateSubmissionUrl)) && (
-              <div className="px-5 py-3 border-b border-[rgba(243,239,248,0.04)] flex flex-wrap items-center gap-2">
-                {activeQuest.detailsUrl && (
-                  <a
-                    href={activeQuest.detailsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150"
-                    style={{
-                      background: 'rgba(48, 145, 255, 0.1)',
-                      color: '#3091ff',
-                      border: '1px solid rgba(48, 145, 255, 0.3)',
-                    }}
-                  >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                    More details
-                  </a>
-                )}
-                {isExpiredStatus(activeQuest.status) && activeQuest.lateSubmissionUrl && (
-                  <a
-                    href={activeQuest.lateSubmissionUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150"
-                    style={{
-                      background: 'rgba(255, 176, 32, 0.1)',
-                      color: '#FFB020',
-                      border: '1px solid rgba(255, 176, 32, 0.3)',
-                    }}
-                  >
-                    <Clock className="h-3.5 w-3.5" />
-                    Late Submission
-                  </a>
+            {(activeQuest.detailsUrl || activeQuest.submissionUrl) && (
+              <div className="px-5 py-3 border-b border-[rgba(243,239,248,0.04)] flex flex-col gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  {activeQuest.detailsUrl && (
+                    <a
+                      href={activeQuest.detailsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150"
+                      style={{
+                        background: 'rgba(48, 145, 255, 0.1)',
+                        color: '#3091ff',
+                        border: '1px solid rgba(48, 145, 255, 0.3)',
+                      }}
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      More details
+                    </a>
+                  )}
+                  {activeQuest.submissionUrl && (() => {
+                    const expired = isExpiredStatus(activeQuest.status);
+                    return (
+                      <a
+                        href={activeQuest.submissionUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150"
+                        style={
+                          expired
+                            ? {
+                                background: 'rgba(255, 176, 32, 0.1)',
+                                color: '#FFB020',
+                                border: '1px solid rgba(255, 176, 32, 0.3)',
+                              }
+                            : {
+                                background: 'linear-gradient(135deg, #ff30c2, #3091ff)',
+                                color: '#fff',
+                              }
+                        }
+                      >
+                        {expired ? <Clock className="h-3.5 w-3.5" /> : <Send className="h-3.5 w-3.5" />}
+                        {expired ? 'Late Submission' : 'Submit'}
+                      </a>
+                    );
+                  })()}
+                </div>
+                {/* Late submission hint */}
+                {activeQuest.submissionUrl && isExpiredStatus(activeQuest.status) && (
+                  <p className="text-[11px] leading-relaxed text-[#FFB020]/80">
+                    {LATE_SUBMISSION_HINT}
+                  </p>
                 )}
               </div>
             )}
