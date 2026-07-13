@@ -50,12 +50,12 @@ export function AssetDetailModal({ asset, open, onClose }: Props) {
               {title}
             </DialogTitle>
             {description && (
-              <p className="text-[#9CA3AF] text-sm mt-2 leading-relaxed">{description}</p>
+              <p className="text-[#c9c5d4] text-sm mt-2 leading-relaxed">{description}</p>
             )}
           </DialogHeader>
 
           {/* Meta row */}
-          <div className="flex flex-wrap gap-4 mt-4 text-xs text-[#6B7280]">
+          <div className="flex flex-wrap gap-4 mt-4 text-xs text-[#a9a4b8]">
             <span className="flex items-center gap-1.5">
               <User className="h-3 w-3" />
               {asset.creatorName}
@@ -85,7 +85,7 @@ export function AssetDetailModal({ asset, open, onClose }: Props) {
         )}
 
         {!richContent && (
-          <div className="p-6 text-[#6B7280] text-sm italic">
+          <div className="p-6 text-[#a9a4b8] text-sm italic">
             No additional details available.
           </div>
         )}

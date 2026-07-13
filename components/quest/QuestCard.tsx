@@ -1,10 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, Hash, ChevronRight, User, ExternalLink, Clock, Send } from 'lucide-react';
+import { Calendar, ChevronRight, User, ExternalLink, Clock, Send } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
 import { useUIStore } from '@/store/ui.store';
-import { formatDateRange, truncate, isExpiredStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
+import { formatDateRange, truncate, isLateStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
 import type { Quest } from '@/types';
 
 interface Props {
@@ -24,7 +24,7 @@ export function QuestCard({ quest, index = 0 }: Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, delay: index * 0.04 }}
       onClick={() => openQuestDrawer(quest)}
-      className="rounded-xl border border-[rgba(243,239,248,0.07)] bg-[#0d1638] p-4 card-hover cursor-pointer"
+      className="rounded-2xl border border-[rgba(243,239,248,0.07)] bg-[#0d1638] p-5 card-hover cursor-pointer"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && openQuestDrawer(quest)}
@@ -32,10 +32,10 @@ export function QuestCard({ quest, index = 0 }: Props) {
     >
       {/* Top row */}
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[#6B7280] text-xs font-mono">{quest.questNumber}</span>
+        <span className="text-[#a9a4b8] text-xs font-mono">{quest.questNumber}</span>
         <div className="flex items-center gap-2">
           <QuestStatusBadge status={quest.status} size="sm" />
-          <ChevronRight className="h-3.5 w-3.5 text-[#6B7280]" />
+          <ChevronRight className="h-3.5 w-3.5 text-[#a9a4b8]" />
         </div>
       </div>
 
@@ -44,18 +44,14 @@ export function QuestCard({ quest, index = 0 }: Props) {
 
       {/* Description */}
       {description && (
-        <p className="text-[#6B7280] text-xs leading-relaxed mb-3">{truncate(description, 120)}</p>
+        <p className="text-[#a9a4b8] text-xs leading-relaxed mb-3">{truncate(description, 120)}</p>
       )}
 
       {/* Meta */}
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[#6B7280]">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[#a9a4b8]">
         <span className="flex items-center gap-1">
           <Calendar className="h-2.5 w-2.5" />
           {formatDateRange(quest.startDate, quest.endDate)}
-        </span>
-        <span className="flex items-center gap-1">
-          <Hash className="h-2.5 w-2.5" />
-          {quest.assetCount} asset{quest.assetCount !== 1 ? 's' : ''}
         </span>
         <span className="flex items-center gap-1">
           <User className="h-2.5 w-2.5" />
@@ -79,17 +75,17 @@ export function QuestCard({ quest, index = 0 }: Props) {
             </a>
           )}
           {quest.submissionUrl && (() => {
-            const expired = isExpiredStatus(quest.status);
+            const late = isLateStatus(quest.status);
             return (
               <a
                 href={quest.submissionUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                title={expired ? LATE_SUBMISSION_HINT : undefined}
-                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-medium ms-auto"
+                title={late ? LATE_SUBMISSION_HINT : undefined}
+                className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-medium ms-auto"
                 style={
-                  expired
+                  late
                     ? {
                         background: 'rgba(255, 176, 32, 0.1)',
                         color: '#FFB020',
@@ -102,8 +98,8 @@ export function QuestCard({ quest, index = 0 }: Props) {
                       }
                 }
               >
-                {expired ? <Clock className="h-3 w-3" /> : <Send className="h-3 w-3" />}
-                {expired ? 'Late Submission' : 'Submit'}
+                {late ? <Clock className="h-3 w-3" /> : <Send className="h-3 w-3" />}
+                {late ? 'Late Submission' : 'Submit'}
               </a>
             );
           })()}

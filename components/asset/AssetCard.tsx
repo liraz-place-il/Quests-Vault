@@ -45,12 +45,12 @@ export function AssetCard({ asset }: Props) {
         <div className="flex-1">
           <p className="text-[#f3eff8] font-semibold text-sm leading-snug mb-1">{title}</p>
           {description && (
-            <p className="text-[#6B7280] text-xs leading-relaxed">{truncate(description, 100)}</p>
+            <p className="text-[#a9a4b8] text-xs leading-relaxed">{truncate(description, 100)}</p>
           )}
         </div>
 
         {/* Meta */}
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[#6B7280]">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[#a9a4b8]">
           <span className="flex items-center gap-1">
             <User className="h-2.5 w-2.5" />
             {asset.creatorName}
@@ -90,7 +90,7 @@ export function AssetCard({ asset }: Props) {
 
           <button
             onClick={() => setDetailOpen(true)}
-            className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium text-[#9CA3AF] hover:text-[#f3eff8] transition-colors duration-150"
+            className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium text-[#c9c5d4] hover:text-[#f3eff8] transition-colors duration-150"
             style={{
               background: 'rgba(243,239,248,0.04)',
               border: '1px solid rgba(243,239,248,0.06)',

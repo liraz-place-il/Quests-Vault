@@ -9,7 +9,7 @@ import { formatDate } from '@/lib/utils';
 import { Trash2, Pencil, Plus, AlertCircle } from 'lucide-react';
 import type { Quest, QuestStatus } from '@/types';
 
-const STATUSES: QuestStatus[] = ['Active', 'Pending', 'Completed', 'Expired', 'Draft', 'Archived'];
+const STATUSES: QuestStatus[] = ['Active', 'Pending', 'Completed', 'Draft', 'Archived'];
 
 export function AdminPageClient() {
   const { data, isLoading } = useQuests({ pageSize: 100, sortBy: 'updatedAt', sortDir: 'desc' });
@@ -42,11 +42,11 @@ export function AdminPageClient() {
             Admin{' '}
             <span className="gradient-text">Dashboard</span>
           </motion.h1>
-          <p className="text-sm text-[#6B7280] mt-1">Manage quests and assets</p>
+          <p className="text-sm text-[#a9a4b8] mt-1">Manage quests</p>
         </div>
         <a
           href="/quests"
-          className="text-sm text-[#9CA3AF] hover:text-[#f3eff8] transition-colors"
+          className="text-sm text-[#c9c5d4] hover:text-[#f3eff8] transition-colors"
         >
           ← Back to Vault
         </a>
@@ -63,9 +63,9 @@ export function AdminPageClient() {
         <AlertCircle className="h-4 w-4 text-[#3091ff] shrink-0 mt-0.5" />
         <div>
           <p className="text-[#3091ff] font-medium">Admin panel is open during development</p>
-          <p className="text-[#6B7280] mt-0.5">
+          <p className="text-[#a9a4b8] mt-0.5">
             Authentication will be added in Phase 3. To manage quests and assets, you can also edit them directly in your{' '}
-            <span className="text-[#9CA3AF]">Airtable base</span>.
+            <span className="text-[#c9c5d4]">Airtable base</span>.
           </p>
         </div>
       </div>
@@ -83,7 +83,7 @@ export function AdminPageClient() {
             className="rounded-xl border border-[rgba(243,239,248,0.07)] bg-[#0d1638] p-4"
           >
             <p className="text-2xl font-bold text-[#f3eff8]">{stat.value}</p>
-            <p className="text-xs text-[#6B7280] mt-1">{stat.label}</p>
+            <p className="text-xs text-[#a9a4b8] mt-1">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -91,7 +91,7 @@ export function AdminPageClient() {
       {/* Quest list */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-[#9CA3AF] uppercase tracking-wider">
+          <h2 className="text-sm font-semibold text-[#c9c5d4] uppercase tracking-wider">
             Quests
           </h2>
           <button
@@ -109,9 +109,9 @@ export function AdminPageClient() {
         </div>
 
         {isLoading ? (
-          <div className="text-sm text-[#6B7280] py-4">Loading quests…</div>
+          <div className="text-sm text-[#a9a4b8] py-4">Loading quests…</div>
         ) : quests.length === 0 ? (
-          <div className="text-sm text-[#6B7280] py-4">
+          <div className="text-sm text-[#a9a4b8] py-4">
             No quests found. Add your Airtable credentials to .env.local to see data.
           </div>
         ) : (
@@ -122,10 +122,10 @@ export function AdminPageClient() {
                   className="border-b border-[rgba(243,239,248,0.06)]"
                   style={{ background: 'rgba(243,239,248,0.02)' }}
                 >
-                  {['ID', 'Title', 'Status', 'Start', 'End', 'Assets', 'Actions'].map((h) => (
+                  {['ID', 'Title', 'Status', 'Start', 'End', 'Actions'].map((h) => (
                     <th
                       key={h}
-                      className="px-4 py-2.5 text-start text-[10px] font-semibold uppercase tracking-wider text-[#6B7280]"
+                      className="px-4 py-2.5 text-start text-[10px] font-semibold uppercase tracking-wider text-[#a9a4b8]"
                     >
                       {h}
                     </th>
@@ -139,7 +139,7 @@ export function AdminPageClient() {
                     className="border-b border-[rgba(243,239,248,0.03)]"
                   >
                     <td className="px-4 py-2.5">
-                      <span className="font-mono text-xs text-[#6B7280]">{quest.questNumber}</span>
+                      <span className="font-mono text-xs text-[#a9a4b8]">{quest.questNumber}</span>
                     </td>
                     <td className="px-4 py-2.5">
                       <span className="text-[#f3eff8] text-xs font-medium">{quest.title}</span>
@@ -153,7 +153,7 @@ export function AdminPageClient() {
                         style={{
                           background: '#141e47',
                           border: '1px solid rgba(243,239,248,0.08)',
-                          color: '#9CA3AF',
+                          color: '#c9c5d4',
                         }}
                       >
                         {STATUSES.map((s) => (
@@ -162,19 +162,16 @@ export function AdminPageClient() {
                       </select>
                     </td>
                     <td className="px-4 py-2.5">
-                      <span className="text-xs text-[#6B7280]">{formatDate(quest.startDate)}</span>
+                      <span className="text-xs text-[#a9a4b8]">{formatDate(quest.startDate)}</span>
                     </td>
                     <td className="px-4 py-2.5">
-                      <span className="text-xs text-[#6B7280]">{formatDate(quest.endDate)}</span>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <span className="text-xs text-[#9CA3AF]">{quest.assetCount}</span>
+                      <span className="text-xs text-[#a9a4b8]">{formatDate(quest.endDate)}</span>
                     </td>
                     <td className="px-4 py-2.5">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => window.alert('Quest edit form coming in Phase 2.\nEdit directly in Airtable for now.')}
-                          className="p-1 rounded text-[#6B7280] hover:text-[#9CA3AF] transition-colors"
+                          className="p-1 rounded text-[#a9a4b8] hover:text-[#c9c5d4] transition-colors"
                           title="Edit quest"
                         >
                           <Pencil className="h-3.5 w-3.5" />
@@ -182,7 +179,7 @@ export function AdminPageClient() {
                         <button
                           onClick={() => handleDelete(quest)}
                           disabled={deleting}
-                          className="p-1 rounded text-[#6B7280] hover:text-[#FF5A5F] transition-colors"
+                          className="p-1 rounded text-[#a9a4b8] hover:text-[#FF5A5F] transition-colors"
                           title="Delete quest"
                         >
                           <Trash2 className="h-3.5 w-3.5" />

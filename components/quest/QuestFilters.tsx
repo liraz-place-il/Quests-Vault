@@ -8,7 +8,6 @@ const STATUS_OPTIONS: { label: string; value: QuestStatus | 'all' }[] = [
   { label: 'Active', value: 'Active' },
   { label: 'Pending', value: 'Pending' },
   { label: 'Completed', value: 'Completed' },
-  { label: 'Expired', value: 'Expired' },
 ];
 
 interface Props {
@@ -23,18 +22,18 @@ export function QuestFilters({ search, onSearchChange, status, onStatusChange }:
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
       {/* Search */}
       <div className="relative flex-1">
-        <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B7280]" />
+        <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#a9a4b8]" />
         <input
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search quests…"
-          className="w-full rounded-lg py-2 ps-9 pe-9 text-sm bg-[rgba(243,239,248,0.04)] border border-[rgba(243,239,248,0.06)] text-[#f3eff8] placeholder:text-[#4B5563] outline-none focus:border-[rgba(48,145,255,0.4)] transition-colors"
+          className="w-full rounded-lg py-2 ps-9 pe-9 text-sm bg-[rgba(243,239,248,0.04)] border border-[rgba(243,239,248,0.06)] text-[#f3eff8] placeholder:text-[#8b86a0] outline-none focus:border-[rgba(48,145,255,0.4)] transition-colors"
         />
         {search && (
           <button
             onClick={() => onSearchChange('')}
-            className="absolute end-3 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#9CA3AF]"
+            className="absolute end-3 top-1/2 -translate-y-1/2 text-[#a9a4b8] hover:text-[#c9c5d4]"
             aria-label="Clear search"
           >
             <X className="h-3.5 w-3.5" />
@@ -60,7 +59,7 @@ export function QuestFilters({ search, onSearchChange, status, onStatusChange }:
                     }
                   : {
                       background: 'rgba(243,239,248,0.03)',
-                      color: '#6B7280',
+                      color: '#a9a4b8',
                       border: '1px solid rgba(243,239,248,0.06)',
                     }
               }

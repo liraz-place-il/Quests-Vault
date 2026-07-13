@@ -2,11 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, User, Hash, ExternalLink, Clock, Send } from 'lucide-react';
+import { X, Calendar, User, ExternalLink, Clock, Send } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
-import { AssetGrid } from '@/components/asset/AssetGrid';
 import { useUIStore } from '@/store/ui.store';
-import { formatDateRange, isExpiredStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
+import { formatDateRange, isLateStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
 
 export function QuestDrawer() {
   const { activeQuest, isQuestDrawerOpen, closeQuestDrawer, locale } = useUIStore();
@@ -31,6 +30,7 @@ export function QuestDrawer() {
 
   const title = (locale === 'he' && activeQuest?.titleHe) ? activeQuest.titleHe : activeQuest?.title;
   const description = (locale === 'he' && activeQuest?.descriptionHe) ? activeQuest.descriptionHe : activeQuest?.description;
+  const late = activeQuest ? isLateStatus(activeQuest.status) : false;
 
   return (
     <AnimatePresence>
@@ -67,22 +67,22 @@ export function QuestDrawer() {
           >
             {/* Header */}
             <div
-              className="flex items-start justify-between p-5 border-b border-[rgba(243,239,248,0.06)]"
+              className="flex items-start justify-between px-6 pt-7 pb-6"
               style={{
-                background: 'linear-gradient(135deg, rgba(255,48,194,0.04), rgba(48,145,255,0.04))',
+                background: 'linear-gradient(135deg, rgba(255,48,194,0.05), rgba(48,145,255,0.05))',
               }}
             >
-              <div className="flex-1 min-w-0 me-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[#6B7280] text-xs font-mono">{activeQuest.questNumber}</span>
+              <div className="flex-1 min-w-0 me-4">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <span className="text-[#a9a4b8] text-xs font-mono tracking-wide">{activeQuest.questNumber}</span>
                   <QuestStatusBadge status={activeQuest.status} size="sm" />
                 </div>
-                <h2 className="text-[#f3eff8] font-semibold text-lg leading-snug">{title}</h2>
+                <h2 className="text-[#f3eff8] font-semibold text-2xl leading-snug tracking-tight">{title}</h2>
               </div>
               <button
                 ref={closeRef}
                 onClick={closeQuestDrawer}
-                className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#f3eff8] hover:bg-[rgba(243,239,248,0.05)] transition-colors shrink-0"
+                className="p-2 rounded-full text-[#a9a4b8] hover:text-[#f3eff8] hover:bg-[rgba(243,239,248,0.06)] transition-colors shrink-0"
                 aria-label="Close quest panel"
               >
                 <X className="h-4 w-4" />
@@ -90,91 +90,91 @@ export function QuestDrawer() {
             </div>
 
             {/* Meta */}
-            <div className="px-5 py-3 border-b border-[rgba(243,239,248,0.04)] flex flex-wrap gap-4 text-xs text-[#6B7280]">
-              <span className="flex items-center gap-1.5">
-                <Calendar className="h-3 w-3" />
+            <div className="px-6 py-4 border-t border-b border-[rgba(243,239,248,0.05)] flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-[#a9a4b8]">
+              <span className="flex items-center gap-2">
+                <Calendar className="h-3.5 w-3.5 opacity-70" />
                 {formatDateRange(activeQuest.startDate, activeQuest.endDate)}
               </span>
-              <span className="flex items-center gap-1.5">
-                <User className="h-3 w-3" />
+              <span className="flex items-center gap-2">
+                <User className="h-3.5 w-3.5 opacity-70" />
                 {activeQuest.creatorName}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Hash className="h-3 w-3" />
-                {activeQuest.assetCount} asset{activeQuest.assetCount !== 1 ? 's' : ''}
               </span>
             </div>
 
-            {/* Description */}
-            {description && (
-              <div className="px-5 py-4 border-b border-[rgba(243,239,248,0.04)]">
-                <p className="text-[#9CA3AF] text-sm leading-relaxed">{description}</p>
-              </div>
-            )}
-
-            {/* Quest-level actions */}
-            {(activeQuest.detailsUrl || activeQuest.submissionUrl) && (
-              <div className="px-5 py-3 border-b border-[rgba(243,239,248,0.04)] flex flex-col gap-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  {activeQuest.detailsUrl && (
-                    <a
-                      href={activeQuest.detailsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150"
-                      style={{
-                        background: 'rgba(48, 145, 255, 0.1)',
-                        color: '#3091ff',
-                        border: '1px solid rgba(48, 145, 255, 0.3)',
-                      }}
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" />
-                      More details
-                    </a>
-                  )}
-                  {activeQuest.submissionUrl && (() => {
-                    const expired = isExpiredStatus(activeQuest.status);
-                    return (
-                      <a
-                        href={activeQuest.submissionUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150"
-                        style={
-                          expired
-                            ? {
-                                background: 'rgba(255, 176, 32, 0.1)',
-                                color: '#FFB020',
-                                border: '1px solid rgba(255, 176, 32, 0.3)',
-                              }
-                            : {
-                                background: 'linear-gradient(135deg, #ff30c2, #3091ff)',
-                                color: '#fff',
-                              }
-                        }
-                      >
-                        {expired ? <Clock className="h-3.5 w-3.5" /> : <Send className="h-3.5 w-3.5" />}
-                        {expired ? 'Late Submission' : 'Submit'}
-                      </a>
-                    );
-                  })()}
+            {/* Scrollable body */}
+            <div className="flex-1 overflow-y-auto scrollbar-thin">
+              {/* Description */}
+              {description && (
+                <div className="px-6 py-6">
+                  <p className="text-[#c9c5d4] text-[15px] leading-relaxed">{description}</p>
                 </div>
-                {/* Late submission hint */}
-                {activeQuest.submissionUrl && isExpiredStatus(activeQuest.status) && (
-                  <p className="text-[11px] leading-relaxed text-[#FFB020]/80">
+              )}
+
+              {/* Late submission hint */}
+              {late && activeQuest.submissionUrl && (
+                <div className="px-6 pb-4">
+                  <div
+                    className="rounded-2xl px-4 py-3.5 text-[13px] leading-relaxed"
+                    style={{
+                      background: 'rgba(255, 176, 32, 0.07)',
+                      border: '1px solid rgba(255, 176, 32, 0.2)',
+                      color: '#FFB020',
+                    }}
+                  >
                     {LATE_SUBMISSION_HINT}
-                  </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Sticky action footer */}
+            {(activeQuest.detailsUrl || activeQuest.submissionUrl) && (
+              <div
+                className="px-6 py-5 border-t border-[rgba(243,239,248,0.06)] flex flex-col gap-3"
+                style={{ background: 'rgba(8,14,44,0.6)', backdropFilter: 'blur(12px)' }}
+              >
+                {activeQuest.submissionUrl && (
+                  <a
+                    href={activeQuest.submissionUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition-all duration-150 active:scale-[0.98]"
+                    style={
+                      late
+                        ? {
+                            background: 'rgba(255, 176, 32, 0.12)',
+                            color: '#FFB020',
+                            border: '1px solid rgba(255, 176, 32, 0.35)',
+                          }
+                        : {
+                            background: 'linear-gradient(135deg, #ff30c2, #3091ff)',
+                            color: '#fff',
+                            boxShadow: '0 4px 20px rgba(255,48,194,0.25)',
+                          }
+                    }
+                  >
+                    {late ? <Clock className="h-4 w-4" /> : <Send className="h-4 w-4" />}
+                    {late ? 'Late Submission' : 'Register to the quest'}
+                  </a>
+                )}
+                {activeQuest.detailsUrl && (
+                  <a
+                    href={activeQuest.detailsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-medium transition-all duration-150 active:scale-[0.98]"
+                    style={{
+                      background: 'rgba(48, 145, 255, 0.1)',
+                      color: '#3091ff',
+                      border: '1px solid rgba(48, 145, 255, 0.3)',
+                    }}
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Details
+                  </a>
                 )}
               </div>
             )}
-
-            {/* Assets */}
-            <div className="flex-1 overflow-y-auto scrollbar-thin p-5">
-              <p className="text-[#6B7280] text-xs font-medium uppercase tracking-wider mb-3">
-                Assets
-              </p>
-              <AssetGrid questId={activeQuest.id} />
-            </div>
           </motion.aside>
         </>
       )}

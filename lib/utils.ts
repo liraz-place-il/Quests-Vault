@@ -42,19 +42,20 @@ export function isPastEndDate(endDate?: string): boolean {
 
 /**
  * Derive the effective status. If the end date has passed and the quest
- * isn't already finalized (Completed/Archived), it is shown as Expired.
+ * isn't already finalized (Completed/Archived), it is shown as Completed.
  */
 export function computeQuestStatus(
   rawStatus: QuestStatus,
   endDate?: string
 ): QuestStatus {
   const finalized = rawStatus === 'Completed' || rawStatus === 'Archived';
-  if (!finalized && isPastEndDate(endDate)) return 'Expired';
+  if (!finalized && isPastEndDate(endDate)) return 'Completed';
   return rawStatus;
 }
 
-export function isExpiredStatus(status: QuestStatus): boolean {
-  return typeof status === 'string' && status.toLowerCase() === 'expired';
+/** Completed quests accept late submissions (deadline passed). */
+export function isLateStatus(status: QuestStatus): boolean {
+  return typeof status === 'string' && status.toLowerCase() === 'completed';
 }
 
 export const LATE_SUBMISSION_HINT =

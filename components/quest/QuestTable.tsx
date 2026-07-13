@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { ChevronUp, ChevronDown, ChevronsUpDown, ExternalLink, Clock, Send } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
 import { useUIStore } from '@/store/ui.store';
-import { formatDate, truncate, isExpiredStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
+import { formatDate, truncate, isLateStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
 import {
   Tooltip,
   TooltipContent,
@@ -35,7 +35,7 @@ export function QuestTable({ quests }: Props) {
       header: 'ID',
       size: 80,
       cell: (info) => (
-        <span className="font-mono text-xs text-[#6B7280]">{info.getValue()}</span>
+        <span className="font-mono text-xs text-[#a9a4b8]">{info.getValue()}</span>
       ),
     }),
     col.accessor('title', {
@@ -55,14 +55,14 @@ export function QuestTable({ quests }: Props) {
       header: 'Start',
       size: 110,
       cell: (info) => (
-        <span className="text-xs text-[#6B7280]">{formatDate(info.getValue())}</span>
+        <span className="text-xs text-[#a9a4b8]">{formatDate(info.getValue())}</span>
       ),
     }),
     col.accessor('endDate', {
       header: 'End',
       size: 110,
       cell: (info) => (
-        <span className="text-xs text-[#6B7280]">{formatDate(info.getValue())}</span>
+        <span className="text-xs text-[#a9a4b8]">{formatDate(info.getValue())}</span>
       ),
     }),
     col.accessor('description', {
@@ -71,13 +71,13 @@ export function QuestTable({ quests }: Props) {
       cell: (info) => {
         const quest = info.row.original;
         const desc = (locale === 'he' && quest.descriptionHe) ? quest.descriptionHe : info.getValue();
-        if (!desc) return <span className="text-xs text-[#4B5563]">—</span>;
+        if (!desc) return <span className="text-xs text-[#8b86a0]">—</span>;
         const short = truncate(desc, 60);
-        if (desc.length <= 60) return <span className="text-xs text-[#6B7280]">{short}</span>;
+        if (desc.length <= 60) return <span className="text-xs text-[#a9a4b8]">{short}</span>;
         return (
           <Tooltip>
             <TooltipTrigger>
-              <span className="text-xs text-[#6B7280] cursor-default">{short}</span>
+              <span className="text-xs text-[#a9a4b8] cursor-default">{short}</span>
             </TooltipTrigger>
             <TooltipContent
               className="max-w-xs text-xs bg-[#141e47] text-[#f3eff8]"
@@ -89,18 +89,11 @@ export function QuestTable({ quests }: Props) {
         );
       },
     }),
-    col.accessor('assetCount', {
-      header: 'Assets',
-      size: 70,
-      cell: (info) => (
-        <span className="text-xs text-[#9CA3AF] font-medium">{info.getValue()}</span>
-      ),
-    }),
     col.accessor('updatedAt', {
       header: 'Updated',
       size: 110,
       cell: (info) => (
-        <span className="text-xs text-[#6B7280]">{formatDate(info.getValue())}</span>
+        <span className="text-xs text-[#a9a4b8]">{formatDate(info.getValue())}</span>
       ),
     }),
     col.display({
@@ -110,7 +103,7 @@ export function QuestTable({ quests }: Props) {
       cell: (info) => {
         const quest = info.row.original;
         if (!quest.detailsUrl) {
-          return <span className="text-xs text-[#4B5563]">—</span>;
+          return <span className="text-xs text-[#8b86a0]">—</span>;
         }
         return (
           <a
@@ -134,19 +127,19 @@ export function QuestTable({ quests }: Props) {
       cell: (info) => {
         const quest = info.row.original;
         if (!quest.submissionUrl) {
-          return <span className="text-xs text-[#4B5563]">—</span>;
+          return <span className="text-xs text-[#8b86a0]">—</span>;
         }
-        const expired = isExpiredStatus(quest.status);
+        const late = isLateStatus(quest.status);
         return (
           <a
             href={quest.submissionUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            title={expired ? LATE_SUBMISSION_HINT : undefined}
-            className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-medium transition-all duration-150"
+            title={late ? LATE_SUBMISSION_HINT : undefined}
+            className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-medium transition-all duration-150"
             style={
-              expired
+              late
                 ? {
                     background: 'rgba(255, 176, 32, 0.1)',
                     color: '#FFB020',
@@ -159,11 +152,11 @@ export function QuestTable({ quests }: Props) {
                   }
             }
             aria-label={
-              expired ? `Late submission for ${quest.title}` : `Submit ${quest.title}`
+              late ? `Late submission for ${quest.title}` : `Submit ${quest.title}`
             }
           >
-            {expired ? <Clock className="h-3 w-3" /> : <Send className="h-3 w-3" />}
-            {expired ? 'Late Submission' : 'Submit'}
+            {late ? <Clock className="h-3 w-3" /> : <Send className="h-3 w-3" />}
+            {late ? 'Late Submission' : 'Submit'}
           </a>
         );
       },
@@ -192,17 +185,17 @@ export function QuestTable({ quests }: Props) {
               {hg.headers.map((header) => (
                 <th
                   key={header.id}
-                  className="px-4 py-3 text-start text-[10px] font-semibold uppercase tracking-wider text-[#6B7280] whitespace-nowrap"
+                  className="px-4 py-3 text-start text-[10px] font-semibold uppercase tracking-wider text-[#a9a4b8] whitespace-nowrap"
                   style={{ width: header.getSize() }}
                 >
                   {header.isPlaceholder ? null : (
                     <button
-                      className={`flex items-center gap-1 ${header.column.getCanSort() ? 'cursor-pointer hover:text-[#9CA3AF] transition-colors' : ''}`}
+                      className={`flex items-center gap-1 ${header.column.getCanSort() ? 'cursor-pointer hover:text-[#c9c5d4] transition-colors' : ''}`}
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getCanSort() && (
-                        <span className="text-[#4B5563]">
+                        <span className="text-[#8b86a0]">
                           {header.column.getIsSorted() === 'asc' ? (
                             <ChevronUp className="h-3 w-3" />
                           ) : header.column.getIsSorted() === 'desc' ? (
@@ -227,7 +220,7 @@ export function QuestTable({ quests }: Props) {
               className="quest-row border-b border-[rgba(243,239,248,0.03)]"
             >
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="px-4 py-3 align-middle">
+                <td key={cell.id} className="px-4 py-3.5 align-middle">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -237,7 +230,7 @@ export function QuestTable({ quests }: Props) {
       </table>
 
       {quests.length === 0 && (
-        <div className="py-12 text-center text-sm text-[#6B7280]">No quests found.</div>
+        <div className="py-12 text-center text-sm text-[#a9a4b8]">No quests found.</div>
       )}
     </div>
   );

@@ -58,15 +58,17 @@ export function QuestsPageClient() {
           Quest{' '}
           <span className="gradient-text">Vault</span>
         </motion.h1>
-        <p className="text-sm text-[#6B7280]">
-          {isLoading ? 'Loading…' : `${total} quest${total !== 1 ? 's' : ''} in the archive`}
+        <p className="text-sm text-[#c9c5d4] leading-relaxed max-w-xl">
+          Your way to enhance your experience — every cycle we spotlight the best
+          submission on{' '}
+          <span className="font-semibold text-[#3091ff]">LinkedIn</span> ✨
         </p>
       </div>
 
       {/* Filters */}
       <div className="sticky top-[57px] z-20 py-3 -mx-4 px-4 md:-mx-6 md:px-6"
         style={{
-          background: 'rgba(11,16,32,0.92)',
+          background: 'rgba(8,14,44,0.92)',
           backdropFilter: 'blur(12px)',
           borderBottom: '1px solid rgba(243,239,248,0.04)',
         }}
@@ -119,14 +121,14 @@ export function QuestsPageClient() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between pt-2">
-          <span className="text-xs text-[#6B7280]">
+          <span className="text-xs text-[#a9a4b8]">
             Page {page} of {totalPages} · {total} total
           </span>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#f3eff8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg text-[#a9a4b8] hover:text-[#f3eff8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               style={{ background: 'rgba(243,239,248,0.04)', border: '1px solid rgba(243,239,248,0.06)' }}
               aria-label="Previous page"
             >
@@ -135,7 +137,7 @@ export function QuestsPageClient() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#f3eff8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg text-[#a9a4b8] hover:text-[#f3eff8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               style={{ background: 'rgba(243,239,248,0.04)', border: '1px solid rgba(243,239,248,0.06)' }}
               aria-label="Next page"
             >
