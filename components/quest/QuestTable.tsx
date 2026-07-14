@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { ChevronUp, ChevronDown, ChevronsUpDown, ExternalLink, Clock, Send } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
 import { useUIStore } from '@/store/ui.store';
-import { formatDate, truncate, isLateStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
+import { formatDate, truncate, isLateStatus, LATE_SUBMISSION_HINT, compareQuestNumbers } from '@/lib/utils';
 import {
   Tooltip,
   TooltipContent,
@@ -34,6 +34,8 @@ export function QuestTable({ quests }: Props) {
     col.accessor('questNumber', {
       header: 'ID',
       size: 80,
+      sortingFn: (rowA, rowB) =>
+        compareQuestNumbers(rowA.original.questNumber, rowB.original.questNumber),
       cell: (info) => (
         <span className="font-mono text-xs text-[#a9a4b8]">{info.getValue()}</span>
       ),

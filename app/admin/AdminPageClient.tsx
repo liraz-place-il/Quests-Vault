@@ -13,7 +13,7 @@ import type { Quest, QuestStatus } from '@/types';
 const STATUSES: QuestStatus[] = ['Active', 'Pending', 'Completed', 'Draft', 'Archived'];
 
 export function AdminPageClient() {
-  const { data, isLoading } = useQuests({ pageSize: 100, sortBy: 'updatedAt', sortDir: 'desc' });
+  const { data, isLoading } = useQuests({ pageSize: 100, sortBy: 'questNumber', sortDir: 'asc' });
   const { mutate: updateQuest, isPending: updating } = useUpdateQuest();
   const { mutate: deleteQuest, isPending: deleting } = useDeleteQuest();
   const queryClient = useQueryClient();

@@ -1,6 +1,6 @@
 import Airtable from 'airtable';
 import type { Quest, Asset, Category, QuestListParams } from '@/types';
-import { computeQuestStatus } from '@/lib/utils';
+import { computeQuestStatus, compareQuestNumbers } from '@/lib/utils';
 
 function getBase() {
   const apiKey = process.env.AIRTABLE_API_KEY?.trim();
@@ -90,8 +90,8 @@ export async function getQuests(params: QuestListParams = {}): Promise<{
   const {
     search = '',
     status = 'all',
-    sortBy = 'updatedAt',
-    sortDir = 'desc',
+    sortBy = 'questNumber',
+    sortDir = 'asc',
   } = params;
 
   // Search filters on text fields (safe in Airtable formula).
@@ -118,14 +118,22 @@ export async function getQuests(params: QuestListParams = {}): Promise<{
     );
   }
 
-  // JS-level sort for date fields (Airtable auto-timestamp field names vary)
+  // JS-level sort (Airtable formula sort only handled 'title' above;
+  // auto-timestamp field names vary per base, and questNumber needs
+  // numeric-aware comparison since IDs are inconsistently zero-padded).
   if (sortBy !== 'title') {
     quests = quests.sort((a, b) => {
-      const aVal = sortBy === 'status' ? a.status : (a.createdAt ?? '');
-      const bVal = sortBy === 'status' ? b.status : (b.createdAt ?? '');
-      return sortDir === 'asc'
-        ? aVal.localeCompare(bVal)
-        : bVal.localeCompare(aVal);
+      let cmp: number;
+      if (sortBy === 'questNumber') {
+        cmp = compareQuestNumbers(a.questNumber, b.questNumber);
+      } else if (sortBy === 'status') {
+        cmp = a.status.localeCompare(b.status);
+      } else if (sortBy === 'updatedAt') {
+        cmp = (a.updatedAt ?? '').localeCompare(b.updatedAt ?? '');
+      } else {
+        cmp = (a.createdAt ?? '').localeCompare(b.createdAt ?? '');
+      }
+      return sortDir === 'asc' ? cmp : -cmp;
     });
   }
 

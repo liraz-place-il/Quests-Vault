@@ -146,6 +146,20 @@ export function getFileTypeBadgeStyle(fileType: FileType): {
   }
 }
 
+/**
+ * Compares quest numbers by their numeric portion first (so "Q1" < "Q2" < "Q012"
+ * regardless of zero-padding), falling back to a plain string compare.
+ */
+export function compareQuestNumbers(a: string, b: string): number {
+  const numA = a.match(/\d+/)?.[0];
+  const numB = b.match(/\d+/)?.[0];
+  if (numA && numB) {
+    const diff = parseInt(numA, 10) - parseInt(numB, 10);
+    if (diff !== 0) return diff;
+  }
+  return a.localeCompare(b);
+}
+
 export function truncate(str: string, maxLen: number): string {
   if (str.length <= maxLen) return str;
   return str.slice(0, maxLen).trimEnd() + '…';

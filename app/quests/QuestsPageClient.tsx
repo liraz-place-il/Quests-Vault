@@ -25,8 +25,8 @@ export function QuestsPageClient() {
     pageSize: PAGE_SIZE,
     search,
     status,
-    sortBy: 'updatedAt',
-    sortDir: 'desc',
+    sortBy: 'questNumber',
+    sortDir: 'asc',
   };
 
   const { data, isLoading, isError } = useQuests(params);

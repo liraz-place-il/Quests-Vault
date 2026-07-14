@@ -74,6 +74,6 @@ export interface QuestListParams {
   pageSize?: number;
   search?: string;
   status?: QuestStatus | 'all';
-  sortBy?: 'title' | 'createdAt' | 'updatedAt' | 'status';
+  sortBy?: 'title' | 'createdAt' | 'updatedAt' | 'status' | 'questNumber';
   sortDir?: 'asc' | 'desc';
 }
