@@ -8,7 +8,7 @@ function normalizeStatus(raw?: string): string | undefined {
   const s = raw.trim().toLowerCase();
   if (['done', 'completed', 'complete', 'finished'].includes(s)) return 'Completed';
   if (['active', 'working on it', 'in progress', 'live', 'open'].includes(s)) return 'Active';
-  if (['pending', 'waiting', 'on hold', 'stuck', 'planned'].includes(s)) return 'Pending';
+  if (['pending', 'waiting', 'on hold', 'stuck', 'planned', 'not started'].includes(s)) return 'Pending';
   if (['draft'].includes(s)) return 'Draft';
   if (['archived', 'archive'].includes(s)) return 'Archived';
   // Keep unknown labels as-is (badge falls back to neutral style)
@@ -23,13 +23,21 @@ function parseTimeline(text?: string): { start?: string; end?: string } {
   return {};
 }
 
+/** Extract "Quest #3" -> "Q3" from an item name like "Quest #3 - Automation". */
+function extractQuestNumber(name: string): string | undefined {
+  const match = name.match(/quest\s*#?\s*(\d+)/i);
+  return match ? `Q${match[1]}` : undefined;
+}
+
 function mapItemToQuestRow(item: MondayItem): SyncQuestRow {
-  const timeline = parseTimeline(pick(item, 'timeline', 'dates'));
+  const timeline = parseTimeline(
+    pick(item, 'quest timeline', 'timeline', 'dates')
+  );
 
   return {
     mondayId: item.id,
     title: item.name,
-    questNumber: pick(item, 'quest number', 'quest id', 'number', 'id'),
+    questNumber: pick(item, 'quest number', 'quest id', 'number', 'id') ?? extractQuestNumber(item.name),
     titleHe: pick(item, 'title he', 'hebrew title', 'כותרת'),
     description: pick(item, 'description', 'short description', 'תיאור'),
     descriptionHe: pick(item, 'description he', 'hebrew description'),
@@ -37,11 +45,11 @@ function mapItemToQuestRow(item: MondayItem): SyncQuestRow {
     startDate: pick(item, 'start date', 'start') ?? timeline.start,
     endDate: pick(item, 'end date', 'end', 'due date', 'deadline') ?? timeline.end,
     creatorName: pick(item, 'creator', 'owner', 'person', 'people', 'אחראי'),
-    detailsUrl: pick(item, 'details url', 'details link', 'details', 'more details'),
+    detailsUrl: pick(item, 'quest link', 'details url', 'details link', 'details', 'more details'),
     submissionUrl: pick(
       item,
-      'submission link',
       'submission url',
+      'submission link',
       'submission',
       'register link',
       'registration link'
