@@ -247,3 +247,106 @@ export async function updateAsset(id: string, data: Partial<Asset>): Promise<Ass
 export async function deleteAsset(id: string): Promise<void> {
   await AssetsTable().destroy(id);
 }
+
+// ---------------------------------------------------------------------------
+// Monday.com -> Airtable sync
+// ---------------------------------------------------------------------------
+
+export interface SyncQuestRow {
+  mondayId: string;
+  questNumber?: string;
+  title: string;
+  titleHe?: string;
+  description?: string;
+  descriptionHe?: string;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+  creatorName?: string;
+  detailsUrl?: string;
+  submissionUrl?: string;
+}
+
+function isUnknownFieldError(err: unknown): boolean {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    (err as { error?: string }).error === 'UNKNOWN_FIELD_NAME'
+  );
+}
+
+/**
+ * Upsert quests coming from Monday into the Airtable Quests table.
+ * Match order: mondayId field -> questNumber -> exact title.
+ * Uses typecast so new single-select status options are auto-created.
+ * If the optional `mondayId` field doesn't exist in Airtable, the sync
+ * retries without it (matching then falls back to questNumber/title).
+ */
+export async function upsertQuestsFromMonday(rows: SyncQuestRow[]): Promise<{
+  created: number;
+  updated: number;
+  mondayIdFieldMissing: boolean;
+}> {
+  const table = QuestsTable();
+  const existing = await table.select().all();
+
+  const byMondayId = new Map<string, string>();
+  const byQuestNumber = new Map<string, string>();
+  const byTitle = new Map<string, string>();
+  for (const rec of existing) {
+    const f = rec.fields as Record<string, unknown>;
+    if (f['mondayId']) byMondayId.set(String(f['mondayId']), rec.id);
+    if (f['questNumber']) byQuestNumber.set(String(f['questNumber']), rec.id);
+    if (f['title']) byTitle.set(String(f['title']).trim().toLowerCase(), rec.id);
+  }
+
+  let created = 0;
+  let updated = 0;
+  let mondayIdFieldMissing = false;
+
+  const buildFields = (row: SyncQuestRow, includeMondayId: boolean): Airtable.FieldSet => {
+    const fields: Airtable.FieldSet = { title: row.title };
+    if (includeMondayId) fields.mondayId = row.mondayId;
+    if (row.questNumber) fields.questNumber = row.questNumber;
+    if (row.titleHe) fields.titleHe = row.titleHe;
+    if (row.description) fields.description = row.description;
+    if (row.descriptionHe) fields.descriptionHe = row.descriptionHe;
+    if (row.status) fields.status = row.status;
+    if (row.startDate) fields.startDate = row.startDate;
+    if (row.endDate) fields.endDate = row.endDate;
+    if (row.creatorName) fields.creatorName = row.creatorName;
+    if (row.detailsUrl) fields.detailsUrl = row.detailsUrl;
+    if (row.submissionUrl) fields.submissionUrl = row.submissionUrl;
+    return fields;
+  };
+
+  for (const row of rows) {
+    const matchId =
+      byMondayId.get(row.mondayId) ??
+      (row.questNumber ? byQuestNumber.get(row.questNumber) : undefined) ??
+      byTitle.get(row.title.trim().toLowerCase());
+
+    const doWrite = async (includeMondayId: boolean) => {
+      if (matchId) {
+        await table.update(matchId, buildFields(row, includeMondayId), { typecast: true });
+        updated++;
+      } else {
+        await table.create(buildFields(row, includeMondayId), { typecast: true });
+        created++;
+      }
+    };
+
+    try {
+      await doWrite(!mondayIdFieldMissing);
+    } catch (err) {
+      if (!mondayIdFieldMissing && isUnknownFieldError(err)) {
+        mondayIdFieldMissing = true;
+        await doWrite(false);
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  return { created, updated, mondayIdFieldMissing };
+}

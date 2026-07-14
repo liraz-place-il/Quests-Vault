@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useQueryClient } from '@tanstack/react-query';
 import { useQuests } from '@/hooks/useQuests';
 import { useUpdateQuest, useDeleteQuest } from '@/hooks/useQuests';
 import { QuestStatusBadge } from '@/components/quest/QuestStatusBadge';
 import { formatDate } from '@/lib/utils';
-import { Trash2, Pencil, Plus, AlertCircle } from 'lucide-react';
+import { Trash2, Pencil, Plus, AlertCircle, RefreshCw } from 'lucide-react';
 import type { Quest, QuestStatus } from '@/types';
 
 const STATUSES: QuestStatus[] = ['Active', 'Pending', 'Completed', 'Draft', 'Archived'];
@@ -15,6 +16,10 @@ export function AdminPageClient() {
   const { data, isLoading } = useQuests({ pageSize: 100, sortBy: 'updatedAt', sortDir: 'desc' });
   const { mutate: updateQuest, isPending: updating } = useUpdateQuest();
   const { mutate: deleteQuest, isPending: deleting } = useDeleteQuest();
+  const queryClient = useQueryClient();
+
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
   const quests = data?.data ?? [];
 
@@ -25,6 +30,29 @@ export function AdminPageClient() {
   const handleDelete = (quest: Quest) => {
     if (window.confirm(`Delete quest "${quest.title}"? This cannot be undone.`)) {
       deleteQuest(quest.id);
+    }
+  };
+
+  const handleSync = async () => {
+    setSyncing(true);
+    setSyncMessage(null);
+    try {
+      const res = await fetch('/api/sync/monday', { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok || json.error) {
+        setSyncMessage(`Sync failed: ${json.error ?? res.statusText}`);
+      } else {
+        const { pulled, created, updated, warning } = json.data;
+        setSyncMessage(
+          `Synced ${pulled} items from Monday — ${created} created, ${updated} updated.` +
+            (warning ? ` ⚠ ${warning}` : '')
+        );
+        queryClient.invalidateQueries({ queryKey: ['quests'] });
+      }
+    } catch (err) {
+      setSyncMessage(`Sync failed: ${err instanceof Error ? err.message : 'network error'}`);
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -44,13 +72,50 @@ export function AdminPageClient() {
           </motion.h1>
           <p className="text-sm text-[#a9a4b8] mt-1">Manage quests</p>
         </div>
-        <a
-          href="/quests"
-          className="text-sm text-[#c9c5d4] hover:text-[#f3eff8] transition-colors"
-        >
-          ← Back to Vault
-        </a>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-150 active:scale-[0.98] disabled:opacity-60"
+            style={{
+              background: 'linear-gradient(135deg, #ff30c2, #3091ff)',
+              color: '#fff',
+              boxShadow: syncing ? 'none' : '0 2px 14px rgba(255,48,194,0.25)',
+            }}
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${syncing ? 'animate-spin' : ''}`} />
+            {syncing ? 'Syncing…' : 'Sync from Monday'}
+          </button>
+          <a
+            href="/quests"
+            className="text-sm text-[#c9c5d4] hover:text-[#f3eff8] transition-colors"
+          >
+            ← Back to Vault
+          </a>
+        </div>
       </div>
+
+      {/* Sync result */}
+      {syncMessage && (
+        <div
+          className="rounded-xl px-4 py-3 text-sm"
+          style={
+            syncMessage.startsWith('Sync failed')
+              ? {
+                  background: 'rgba(255, 90, 95, 0.08)',
+                  border: '1px solid rgba(255, 90, 95, 0.25)',
+                  color: '#FF5A5F',
+                }
+              : {
+                  background: 'rgba(0, 214, 143, 0.08)',
+                  border: '1px solid rgba(0, 214, 143, 0.25)',
+                  color: '#00D68F',
+                }
+          }
+        >
+          {syncMessage}
+        </div>
+      )}
 
       {/* Notice */}
       <div
