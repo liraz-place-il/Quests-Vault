@@ -26,9 +26,6 @@ export function TopBar() {
             priority
           />
         </div>
-        <span className="font-semibold text-[#f3eff8] text-sm tracking-tight hidden sm:block">
-          Quest Vault
-        </span>
       </div>
 
       {/* Right side */}

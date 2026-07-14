@@ -28,6 +28,7 @@ export interface Quest {
   startDate?: string;
   endDate?: string;
   creatorName: string;
+  creatorLinkedin?: string;
   assetCount: number;
   categoryIds: string[];
   categories?: Category[];

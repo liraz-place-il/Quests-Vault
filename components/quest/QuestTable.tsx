@@ -91,13 +91,6 @@ export function QuestTable({ quests }: Props) {
         );
       },
     }),
-    col.accessor('updatedAt', {
-      header: 'Updated',
-      size: 110,
-      cell: (info) => (
-        <span className="text-xs text-[#a9a4b8]">{formatDate(info.getValue())}</span>
-      ),
-    }),
     col.display({
       id: 'details',
       header: 'Details',
@@ -215,11 +208,22 @@ export function QuestTable({ quests }: Props) {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.map((row) => {
+            const isActive = row.original.status?.toLowerCase() === 'active';
+            return (
             <tr
               key={row.id}
               onClick={() => openQuestDrawer(row.original)}
               className="quest-row border-b border-[rgba(243,239,248,0.03)]"
+              style={
+                isActive
+                  ? {
+                      background:
+                        'linear-gradient(90deg, rgba(255,48,194,0.1), rgba(48,145,255,0.1))',
+                      boxShadow: 'inset 3px 0 0 #ff30c2',
+                    }
+                  : undefined
+              }
             >
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id} className="px-4 py-3.5 align-middle">
@@ -227,7 +231,8 @@ export function QuestTable({ quests }: Props) {
                 </td>
               ))}
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
 

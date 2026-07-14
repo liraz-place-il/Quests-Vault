@@ -97,7 +97,18 @@ export function QuestDrawer() {
               </span>
               <span className="flex items-center gap-2">
                 <User className="h-3.5 w-3.5 opacity-70" />
-                {activeQuest.creatorName}
+                {activeQuest.creatorLinkedin ? (
+                  <a
+                    href={activeQuest.creatorLinkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#3091ff] hover:underline"
+                  >
+                    {activeQuest.creatorName}
+                  </a>
+                ) : (
+                  activeQuest.creatorName
+                )}
               </span>
             </div>
 
@@ -170,7 +181,7 @@ export function QuestDrawer() {
                     }}
                   >
                     <ExternalLink className="h-4 w-4" />
-                    Details
+                    What you need to know?
                   </a>
                 )}
               </div>

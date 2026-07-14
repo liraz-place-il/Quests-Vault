@@ -26,7 +26,7 @@ export function QuestsPageClient() {
     search,
     status,
     sortBy: 'questNumber',
-    sortDir: 'asc',
+    sortDir: 'desc',
   };
 
   const { data, isLoading, isError } = useQuests(params);
@@ -61,7 +61,15 @@ export function QuestsPageClient() {
         <p className="text-sm text-[#c9c5d4] leading-relaxed max-w-xl">
           Your way to enhance your experience — every cycle we spotlight the best
           submission on{' '}
-          <span className="font-semibold text-[#3091ff]">LinkedIn</span> ✨
+          <a
+            href="https://www.linkedin.com/company/place-il/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-[#3091ff] hover:underline"
+          >
+            LinkedIn
+          </a>{' '}
+          ✨
         </p>
       </div>
 

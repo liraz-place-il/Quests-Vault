@@ -38,6 +38,7 @@ function parseQuest(record: Airtable.Record<Airtable.FieldSet>): Quest {
     startDate: (f['startDate'] as string) ?? undefined,
     endDate,
     creatorName: (f['creatorName'] as string) ?? 'Unknown',
+    creatorLinkedin: (f['creatorLinkedin'] as string) ?? undefined,
     assetCount: assetLinks.length,
     categoryIds: (f['categories'] as string[]) ?? [],
     detailsUrl: (f['detailsUrl'] as string) ?? undefined,
@@ -271,6 +272,7 @@ export interface SyncQuestRow {
   startDate?: string;
   endDate?: string;
   creatorName?: string;
+  creatorLinkedin?: string;
   detailsUrl?: string;
   submissionUrl?: string;
 }
@@ -323,6 +325,7 @@ export async function upsertQuestsFromMonday(rows: SyncQuestRow[]): Promise<{
     if (row.startDate) fields.startDate = row.startDate;
     if (row.endDate) fields.endDate = row.endDate;
     if (row.creatorName) fields.creatorName = row.creatorName;
+    if (row.creatorLinkedin) fields.creatorLinkedin = row.creatorLinkedin;
     if (row.detailsUrl) fields.detailsUrl = row.detailsUrl;
     if (row.submissionUrl) fields.submissionUrl = row.submissionUrl;
     return fields;

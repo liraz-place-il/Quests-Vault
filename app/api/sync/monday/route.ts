@@ -45,6 +45,14 @@ function mapItemToQuestRow(item: MondayItem): SyncQuestRow {
     startDate: pick(item, 'start date', 'start') ?? timeline.start,
     endDate: pick(item, 'end date', 'end', 'due date', 'deadline') ?? timeline.end,
     creatorName: pick(item, 'creator', 'owner', 'person', 'people', 'אחראי'),
+    creatorLinkedin: pick(
+      item,
+      'creator linkedin',
+      'creator linkedin url',
+      'linkedin',
+      'linkedin url',
+      'creator profile'
+    ),
     detailsUrl: pick(item, 'quest link', 'details url', 'details link', 'details', 'more details'),
     submissionUrl: pick(
       item,
