@@ -1,6 +1,5 @@
 import { QuestsPageClient } from './QuestsPageClient';
 import { TopBar } from '@/components/layout/TopBar';
-import { QuestDrawer } from '@/components/quest/QuestDrawer';
 
 export const metadata = {
   title: 'Quests — Quest Vault',
@@ -13,7 +12,6 @@ export default function QuestsPage() {
       <main className="flex-1 px-4 md:px-6 py-8 max-w-[1400px] mx-auto w-full">
         <QuestsPageClient />
       </main>
-      <QuestDrawer />
     </div>
   );
 }

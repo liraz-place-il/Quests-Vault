@@ -203,3 +203,25 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+
+/* Notification ticker marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 22s linear infinite;
+}
+
+.marquee-track:hover,
+.marquee-track:focus-within {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+    transform: none;
+  }
+}

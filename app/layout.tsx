@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from '@/components/shared/Providers';
+import { NotificationTicker } from '@/components/layout/NotificationTicker';
+import { QuestDrawer } from '@/components/quest/QuestDrawer';
 
 export const metadata: Metadata = {
   title: 'Quest Vault',
@@ -24,7 +26,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen font-sans antialiased">
         <Providers>
+          <NotificationTicker />
           {children}
+          <QuestDrawer />
         </Providers>
       </body>
     </html>
