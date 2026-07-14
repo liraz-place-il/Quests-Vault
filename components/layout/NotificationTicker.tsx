@@ -7,8 +7,7 @@ import { useUIStore } from '@/store/ui.store';
 import type { Quest } from '@/types';
 
 function questLabel(quest: Quest, locale: 'en' | 'he'): string {
-  const title = locale === 'he' && quest.titleHe ? quest.titleHe : quest.title;
-  return `${quest.questNumber} – ${title}`;
+  return locale === 'he' && quest.titleHe ? quest.titleHe : quest.title;
 }
 
 export function NotificationTicker() {
@@ -36,8 +35,8 @@ export function NotificationTicker() {
 
   const messages = shownQuests.map((q) =>
     mode === 'active'
-      ? `Submit ${questLabel(q, locale)} — click here for details`
-      : `${questLabel(q, locale)} is coming soon…`
+      ? `Submit ${questLabel(q, locale)} - click here for details`
+      : `${questLabel(q, locale)} is coming soon`
   );
 
   const joined = messages.join('   •   ');
