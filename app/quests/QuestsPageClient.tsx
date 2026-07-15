@@ -58,19 +58,85 @@ export function QuestsPageClient() {
           Quest{' '}
           <span className="gradient-text">Vault</span>
         </motion.h1>
-        <p className="text-sm text-[#c9c5d4] leading-relaxed max-w-xl">
-          Your way to enhance your experience — every cycle we spotlight the best
-          submission on{' '}
-          <a
-            href="https://www.linkedin.com/company/place-il/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold text-[#3091ff] hover:underline"
-          >
-            LinkedIn
-          </a>{' '}
-          ✨
-        </p>
+        <div className="mt-4 max-w-3xl space-y-5">
+          <section className="space-y-1.5">
+            <h2 className="text-base font-semibold text-[#f3eff8]">
+              What are Quests?
+            </h2>
+            <p className="text-sm text-[#c9c5d4] leading-relaxed">
+              Quests are short-term, production-grade challenges designed to
+              simulate real-world industry tasks. Instead of following rigid
+              tutorials, you are given a business problem and the freedom to
+              explore, choose your own tools, and architect your own solution.
+            </p>
+          </section>
+
+          <section className="space-y-2.5">
+            <h2 className="text-base font-semibold text-[#f3eff8]">
+              Why participate?
+            </h2>
+            <ul className="space-y-2.5">
+              {[
+                {
+                  lead: 'Get Personalized Pro Feedback:',
+                  rest: (
+                    <>
+                      {' '}
+                      Every submission receives actionable code and architectural
+                      review from industry experts, showing you exactly where you
+                      excelled and how to improve.
+                    </>
+                  ),
+                },
+                {
+                  lead: 'Build a Standout Portfolio:',
+                  rest: (
+                    <>
+                      {' '}
+                      Move beyond generic tutorials and build unique, end-to-end
+                      projects that prove your problem-solving skills to tech
+                      recruiters.
+                    </>
+                  ),
+                },
+                {
+                  lead: 'Earn the Spotlight:',
+                  rest: (
+                    <>
+                      {' '}
+                      Top performers from each Quest are featured in our{' '}
+                      <a
+                        href="https://www.linkedin.com/company/place-il/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-[#3091ff] hover:underline"
+                      >
+                        LinkedIn Spotlight
+                      </a>
+                      , gaining direct visibility and exposure to hiring managers
+                      and tech companies.
+                    </>
+                  ),
+                },
+              ].map((item) => (
+                <li
+                  key={item.lead}
+                  className="flex gap-2.5 text-sm text-[#c9c5d4] leading-relaxed"
+                >
+                  <span
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full"
+                    style={{ background: 'linear-gradient(135deg, #ff30c2, #3091ff)' }}
+                    aria-hidden
+                  />
+                  <span>
+                    <span className="font-semibold text-[#f3eff8]">{item.lead}</span>
+                    {item.rest}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
       </div>
 
       {/* Filters */}
