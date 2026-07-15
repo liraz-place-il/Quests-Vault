@@ -1,13 +1,15 @@
 'use client';
 
 import { Search, X } from 'lucide-react';
+import { useT } from '@/hooks/useT';
+import type { TranslationKey } from '@/lib/i18n';
 import type { QuestStatus } from '@/types';
 
-const STATUS_OPTIONS: { label: string; value: QuestStatus | 'all' }[] = [
-  { label: 'All', value: 'all' },
-  { label: 'Active', value: 'Active' },
-  { label: 'Pending', value: 'Pending' },
-  { label: 'Completed', value: 'Completed' },
+const STATUS_OPTIONS: { labelKey: TranslationKey; value: QuestStatus | 'all' }[] = [
+  { labelKey: 'filter.all', value: 'all' },
+  { labelKey: 'status.active', value: 'Active' },
+  { labelKey: 'status.pending', value: 'Pending' },
+  { labelKey: 'status.completed', value: 'Completed' },
 ];
 
 interface Props {
@@ -18,6 +20,7 @@ interface Props {
 }
 
 export function QuestFilters({ search, onSearchChange, status, onStatusChange }: Props) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
       {/* Search */}
@@ -27,14 +30,14 @@ export function QuestFilters({ search, onSearchChange, status, onStatusChange }:
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search quests…"
+          placeholder={t('filter.searchPlaceholder')}
           className="w-full rounded-lg py-2 ps-9 pe-9 text-sm bg-[rgba(243,239,248,0.04)] border border-[rgba(243,239,248,0.06)] text-[#f3eff8] placeholder:text-[#8b86a0] outline-none focus:border-[rgba(48,145,255,0.4)] transition-colors"
         />
         {search && (
           <button
             onClick={() => onSearchChange('')}
             className="absolute end-3 top-1/2 -translate-y-1/2 text-[#a9a4b8] hover:text-[#c9c5d4]"
-            aria-label="Clear search"
+            aria-label={t('filter.clearSearch')}
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -64,7 +67,7 @@ export function QuestFilters({ search, onSearchChange, status, onStatusChange }:
                     }
               }
             >
-              {opt.label}
+              {t(opt.labelKey)}
             </button>
           );
         })}

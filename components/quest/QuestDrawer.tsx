@@ -5,10 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, User, ExternalLink, Clock, Send } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
 import { useUIStore } from '@/store/ui.store';
-import { formatDateRange, isLateStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
+import { useT } from '@/hooks/useT';
+import { formatDateRange, isLateStatus } from '@/lib/utils';
 
 export function QuestDrawer() {
   const { activeQuest, isQuestDrawerOpen, closeQuestDrawer, locale } = useUIStore();
+  const t = useT();
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -83,7 +85,7 @@ export function QuestDrawer() {
                 ref={closeRef}
                 onClick={closeQuestDrawer}
                 className="p-2 rounded-full text-[#a9a4b8] hover:text-[#f3eff8] hover:bg-[rgba(243,239,248,0.06)] transition-colors shrink-0"
-                aria-label="Close quest panel"
+                aria-label={t('drawer.close')}
               >
                 <X className="h-4 w-4" />
               </button>
@@ -132,7 +134,7 @@ export function QuestDrawer() {
                       color: '#FFB020',
                     }}
                   >
-                    {LATE_SUBMISSION_HINT}
+                    {t('hint.lateSubmission')}
                   </div>
                 </div>
               )}
@@ -165,7 +167,7 @@ export function QuestDrawer() {
                     }
                   >
                     {late ? <Clock className="h-4 w-4" /> : <Send className="h-4 w-4" />}
-                    {late ? 'Late Submission' : 'Register to the quest'}
+                    {late ? t('action.lateSubmission') : t('drawer.register')}
                   </a>
                 )}
                 {activeQuest.detailsUrl && (
@@ -181,7 +183,7 @@ export function QuestDrawer() {
                     }}
                   >
                     <ExternalLink className="h-4 w-4" />
-                    What you need to know?
+                    {t('drawer.details')}
                   </a>
                 )}
               </div>

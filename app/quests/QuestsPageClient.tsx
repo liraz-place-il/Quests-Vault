@@ -10,11 +10,13 @@ import { QuestFilters } from '@/components/quest/QuestFilters';
 import { SkeletonQuestRow, SkeletonQuestCard } from '@/components/shared/SkeletonCard';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { ChevronLeft, ChevronRight, ChevronDown, Inbox } from 'lucide-react';
+import { useT } from '@/hooks/useT';
 import type { QuestStatus, QuestListParams } from '@/types';
 
 const PAGE_SIZE = 20;
 
 export function QuestsPageClient() {
+  const t = useT();
   const isMobile = useIsMobile();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<QuestStatus | 'all'>('all');
@@ -64,14 +66,11 @@ export function QuestsPageClient() {
             className="group rounded-xl border border-[rgba(243,239,248,0.08)] bg-[rgba(243,239,248,0.02)] px-4"
           >
             <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-base font-semibold text-[#f3eff8] [&::-webkit-details-marker]:hidden">
-              What are Quests?
+              {t('about.whatTitle')}
               <ChevronDown className="h-4 w-4 text-[#a9a4b8] transition-transform duration-200 group-open:rotate-180" />
             </summary>
             <p className="pb-4 text-sm text-[#c9c5d4] leading-relaxed">
-              Quests are short-term, production-grade challenges designed to
-              simulate real-world industry tasks. Instead of following rigid
-              tutorials, you are given a business problem and the freedom to
-              explore, choose your own tools, and architect your own solution.
+              {t('about.whatBody')}
             </p>
           </details>
 
@@ -80,49 +79,28 @@ export function QuestsPageClient() {
             className="group rounded-xl border border-[rgba(243,239,248,0.08)] bg-[rgba(243,239,248,0.02)] px-4"
           >
             <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-base font-semibold text-[#f3eff8] [&::-webkit-details-marker]:hidden">
-              Why participate?
+              {t('about.whyTitle')}
               <ChevronDown className="h-4 w-4 text-[#a9a4b8] transition-transform duration-200 group-open:rotate-180" />
             </summary>
             <ul className="space-y-2.5 pb-4">
               {[
+                { lead: t('why.feedbackLead'), rest: <> {t('why.feedbackBody')}</> },
+                { lead: t('why.portfolioLead'), rest: <> {t('why.portfolioBody')}</> },
                 {
-                  lead: 'Get Personalized Pro Feedback:',
+                  lead: t('why.spotlightLead'),
                   rest: (
                     <>
                       {' '}
-                      Every submission receives actionable code and architectural
-                      review from industry experts, showing you exactly where you
-                      excelled and how to improve.
-                    </>
-                  ),
-                },
-                {
-                  lead: 'Build a Standout Portfolio:',
-                  rest: (
-                    <>
-                      {' '}
-                      Move beyond generic tutorials and build unique, end-to-end
-                      projects that prove your problem-solving skills to tech
-                      recruiters.
-                    </>
-                  ),
-                },
-                {
-                  lead: 'Earn the Spotlight:',
-                  rest: (
-                    <>
-                      {' '}
-                      Top performers from each Quest are featured in our{' '}
+                      {t('why.spotlightBefore')}
                       <a
                         href="https://www.linkedin.com/company/place-il/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-semibold text-[#3091ff] hover:underline"
                       >
-                        LinkedIn Spotlight
+                        {t('why.spotlightLink')}
                       </a>
-                      , gaining direct visibility and exposure to hiring managers
-                      and tech companies.
+                      {t('why.spotlightAfter')}
                     </>
                   ),
                 },
@@ -166,8 +144,8 @@ export function QuestsPageClient() {
       {/* Content */}
       {isError ? (
         <EmptyState
-          title="Failed to load quests"
-          description="Check your Airtable configuration and try again."
+          title={t('error.loadTitle')}
+          description={t('error.loadBody')}
           icon={<Inbox className="h-12 w-12" />}
         />
       ) : isLoading ? (
@@ -182,8 +160,8 @@ export function QuestsPageClient() {
         )
       ) : quests.length === 0 ? (
         <EmptyState
-          title="No quests found"
-          description={search ? `No results for "${search}"` : 'No quests match the current filter.'}
+          title={t('empty.title')}
+          description={search ? t('empty.search', { query: search }) : t('empty.filter')}
           icon={<Inbox className="h-12 w-12" />}
         />
       ) : isMobile ? (
@@ -204,7 +182,7 @@ export function QuestsPageClient() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between pt-2">
           <span className="text-xs text-[#a9a4b8]">
-            Page {page} of {totalPages} · {total} total
+            {t('pagination.info', { page, totalPages, total })}
           </span>
           <div className="flex items-center gap-2">
             <button

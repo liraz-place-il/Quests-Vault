@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import { LocaleSwitcher } from './LocaleSwitcher';
+import { useT } from '@/hooks/useT';
 
 export function TopBar() {
+  const t = useT();
   return (
     <header
       className="sticky top-0 z-30 flex items-center justify-between px-4 md:px-6 py-3.5 border-b border-[rgba(243,239,248,0.06)]"
@@ -39,7 +41,7 @@ export function TopBar() {
             border: '1px solid rgba(243,239,248,0.06)',
           }}
         >
-          Admin
+          {t('nav.admin')}
         </a>
       </div>
     </header>

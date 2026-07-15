@@ -1,4 +1,8 @@
+'use client';
+
 import { getStatusColor, LIVE_STATUSES } from '@/lib/utils';
+import { useT } from '@/hooks/useT';
+import { hasTranslation } from '@/lib/i18n';
 import type { QuestStatus } from '@/types';
 
 interface Props {
@@ -7,8 +11,13 @@ interface Props {
 }
 
 export function QuestStatusBadge({ status, size = 'md' }: Props) {
+  const t = useT();
   const colors = getStatusColor(status);
   const isSmall = size === 'sm';
+
+  // Localize known statuses (status.active/pending/…); fall back to the raw value.
+  const statusKey = `status.${String(status).toLowerCase()}`;
+  const label = hasTranslation(statusKey) ? t(statusKey) : status;
 
   return (
     <span
@@ -28,7 +37,7 @@ export function QuestStatusBadge({ status, size = 'md' }: Props) {
           style={{ background: colors.text }}
         />
       )}
-      {status}
+      {label}
     </span>
   );
 }

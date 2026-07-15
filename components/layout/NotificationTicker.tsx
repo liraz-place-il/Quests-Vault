@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Sparkles, Send } from 'lucide-react';
 import { useQuests } from '@/hooks/useQuests';
 import { useUIStore } from '@/store/ui.store';
+import { useT } from '@/hooks/useT';
 import type { Quest } from '@/types';
 
 /** Evergreen promo lines; one is picked per session and runs in the ticker. */
@@ -20,6 +21,7 @@ function questLabel(quest: Quest, locale: 'en' | 'he'): string {
 export function NotificationTicker() {
   const { data } = useQuests({ pageSize: 100 });
   const { openQuestDrawer, locale } = useUIStore();
+  const t = useT();
 
   // Pick one promo line per session (stable until a full reload). Chosen after
   // mount so Math.random() can't cause an SSR/client hydration mismatch.
@@ -47,8 +49,8 @@ export function NotificationTicker() {
 
   const questMessages = shownQuests.map((q) =>
     mode === 'active'
-      ? `Submit ${questLabel(q, locale)} - click here for details`
-      : `${questLabel(q, locale)} is coming soon`
+      ? t('ticker.submit', { title: questLabel(q, locale) })
+      : t('ticker.comingSoon', { title: questLabel(q, locale) })
   );
 
   // Promo line runs alongside the quest messages; on its own if no live quest.

@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { Calendar, ChevronRight, User, ExternalLink, Clock, Send } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
 import { useUIStore } from '@/store/ui.store';
-import { formatDateRange, truncate, isLateStatus, LATE_SUBMISSION_HINT } from '@/lib/utils';
+import { useT } from '@/hooks/useT';
+import { formatDateRange, truncate, isLateStatus } from '@/lib/utils';
 import type { Quest } from '@/types';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 
 export function QuestCard({ quest, index = 0 }: Props) {
   const { openQuestDrawer, locale } = useUIStore();
+  const t = useT();
 
   const title = (locale === 'he' && quest.titleHe) ? quest.titleHe : quest.title;
   const description = (locale === 'he' && quest.descriptionHe) ? quest.descriptionHe : quest.description;
@@ -70,7 +72,7 @@ export function QuestCard({ quest, index = 0 }: Props) {
               onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-xs font-medium text-[#3091ff] hover:underline"
             >
-              More details
+              {t('card.moreDetails')}
               <ExternalLink className="h-3 w-3" />
             </a>
           )}
@@ -82,7 +84,7 @@ export function QuestCard({ quest, index = 0 }: Props) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                title={late ? LATE_SUBMISSION_HINT : undefined}
+                title={late ? t('hint.lateSubmission') : undefined}
                 className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-medium ms-auto"
                 style={
                   late
@@ -99,7 +101,7 @@ export function QuestCard({ quest, index = 0 }: Props) {
                 }
               >
                 {late ? <Clock className="h-3 w-3" /> : <Send className="h-3 w-3" />}
-                {late ? 'Late Submission' : 'Submit'}
+                {late ? t('action.lateSubmission') : t('action.submit')}
               </a>
             );
           })()}

@@ -12,7 +12,8 @@ import { useState } from 'react';
 import { ChevronUp, ChevronDown, ChevronsUpDown, ExternalLink, Clock, Send } from 'lucide-react';
 import { QuestStatusBadge } from './QuestStatusBadge';
 import { useUIStore } from '@/store/ui.store';
-import { formatDate, truncate, isLateStatus, LATE_SUBMISSION_HINT, compareQuestNumbers } from '@/lib/utils';
+import { useT } from '@/hooks/useT';
+import { formatDate, truncate, isLateStatus, compareQuestNumbers } from '@/lib/utils';
 import {
   Tooltip,
   TooltipContent,
@@ -29,10 +30,11 @@ interface Props {
 export function QuestTable({ quests }: Props) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { openQuestDrawer, locale } = useUIStore();
+  const t = useT();
 
   const columns = [
     col.accessor('questNumber', {
-      header: 'ID',
+      header: t('table.id'),
       size: 80,
       sortingFn: (rowA, rowB) =>
         compareQuestNumbers(rowA.original.questNumber, rowB.original.questNumber),
@@ -41,7 +43,7 @@ export function QuestTable({ quests }: Props) {
       ),
     }),
     col.accessor('title', {
-      header: 'Title',
+      header: t('table.title'),
       cell: (info) => {
         const quest = info.row.original;
         const title = (locale === 'he' && quest.titleHe) ? quest.titleHe : info.getValue();
@@ -49,26 +51,26 @@ export function QuestTable({ quests }: Props) {
       },
     }),
     col.accessor('status', {
-      header: 'Status',
+      header: t('table.status'),
       size: 100,
       cell: (info) => <QuestStatusBadge status={info.getValue()} size="sm" />,
     }),
     col.accessor('startDate', {
-      header: 'Start',
+      header: t('table.start'),
       size: 110,
       cell: (info) => (
         <span className="text-xs text-[#a9a4b8]">{formatDate(info.getValue())}</span>
       ),
     }),
     col.accessor('endDate', {
-      header: 'End',
+      header: t('table.end'),
       size: 110,
       cell: (info) => (
         <span className="text-xs text-[#a9a4b8]">{formatDate(info.getValue())}</span>
       ),
     }),
     col.accessor('description', {
-      header: 'Description',
+      header: t('table.description'),
       enableSorting: false,
       cell: (info) => {
         const quest = info.row.original;
@@ -93,7 +95,7 @@ export function QuestTable({ quests }: Props) {
     }),
     col.display({
       id: 'details',
-      header: 'Details',
+      header: t('table.details'),
       size: 90,
       cell: (info) => {
         const quest = info.row.original;
@@ -109,7 +111,7 @@ export function QuestTable({ quests }: Props) {
             className="inline-flex items-center gap-1 text-xs font-medium text-[#3091ff] hover:underline"
             aria-label={`Open details for ${quest.title}`}
           >
-            View
+            {t('table.view')}
             <ExternalLink className="h-3 w-3" />
           </a>
         );
@@ -117,7 +119,7 @@ export function QuestTable({ quests }: Props) {
     }),
     col.display({
       id: 'action',
-      header: 'Submission',
+      header: t('table.submission'),
       size: 150,
       cell: (info) => {
         const quest = info.row.original;
@@ -131,7 +133,7 @@ export function QuestTable({ quests }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            title={late ? LATE_SUBMISSION_HINT : undefined}
+            title={late ? t('hint.lateSubmission') : undefined}
             className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-medium transition-all duration-150"
             style={
               late
@@ -151,7 +153,7 @@ export function QuestTable({ quests }: Props) {
             }
           >
             {late ? <Clock className="h-3 w-3" /> : <Send className="h-3 w-3" />}
-            {late ? 'Late Submission' : 'Submit'}
+            {late ? t('action.lateSubmission') : t('action.submit')}
           </a>
         );
       },
@@ -237,7 +239,7 @@ export function QuestTable({ quests }: Props) {
       </table>
 
       {quests.length === 0 && (
-        <div className="py-12 text-center text-sm text-[#a9a4b8]">No quests found.</div>
+        <div className="py-12 text-center text-sm text-[#a9a4b8]">{t('empty.title')}</div>
       )}
     </div>
   );
