@@ -1,10 +1,17 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Sparkles, Send } from 'lucide-react';
 import { useQuests } from '@/hooks/useQuests';
 import { useUIStore } from '@/store/ui.store';
 import type { Quest } from '@/types';
+
+/** Evergreen promo lines; one is picked per session and runs in the ticker. */
+const PROMO_LABELS = [
+  'Build like a pro, deliver like an expert. Submit your Quest and get professional feedback.',
+  'Bridge the gap to the industry. Tackle real-world challenges, submit your Quest, and get expert feedback.',
+  'Solve industry-level problems. Submit your Quest, get expert feedback, and win the LinkedIn spotlight!',
+];
 
 function questLabel(quest: Quest, locale: 'en' | 'he'): string {
   return locale === 'he' && quest.titleHe ? quest.titleHe : quest.title;
@@ -13,6 +20,13 @@ function questLabel(quest: Quest, locale: 'en' | 'he'): string {
 export function NotificationTicker() {
   const { data } = useQuests({ pageSize: 100 });
   const { openQuestDrawer, locale } = useUIStore();
+
+  // Pick one promo line per session (stable until a full reload). Chosen after
+  // mount so Math.random() can't cause an SSR/client hydration mismatch.
+  const [promo, setPromo] = useState<string | null>(null);
+  useEffect(() => {
+    setPromo(PROMO_LABELS[Math.floor(Math.random() * PROMO_LABELS.length)]);
+  }, []);
 
   const quests = data?.data ?? [];
 
@@ -29,15 +43,18 @@ export function NotificationTicker() {
   const mode: 'active' | 'pending' | null =
     activeQuests.length > 0 ? 'active' : pendingQuests.length > 0 ? 'pending' : null;
 
-  if (!mode) return null;
+  const shownQuests = mode === 'active' ? activeQuests : mode === 'pending' ? pendingQuests : [];
 
-  const shownQuests = mode === 'active' ? activeQuests : pendingQuests;
-
-  const messages = shownQuests.map((q) =>
+  const questMessages = shownQuests.map((q) =>
     mode === 'active'
       ? `Submit ${questLabel(q, locale)} - click here for details`
       : `${questLabel(q, locale)} is coming soon`
   );
+
+  // Promo line runs alongside the quest messages; on its own if no live quest.
+  const messages = [...questMessages, ...(promo ? [promo] : [])];
+
+  if (messages.length === 0) return null;
 
   const joined = messages.join('   •   ');
   const isClickable = mode === 'active';
