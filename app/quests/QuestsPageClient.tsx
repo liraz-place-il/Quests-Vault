@@ -9,7 +9,7 @@ import { QuestCard } from '@/components/quest/QuestCard';
 import { QuestFilters } from '@/components/quest/QuestFilters';
 import { SkeletonQuestRow, SkeletonQuestCard } from '@/components/shared/SkeletonCard';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { ChevronLeft, ChevronRight, Inbox } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown, Inbox } from 'lucide-react';
 import type { QuestStatus, QuestListParams } from '@/types';
 
 const PAGE_SIZE = 20;
@@ -58,24 +58,32 @@ export function QuestsPageClient() {
           Quest{' '}
           <span className="gradient-text">Vault</span>
         </motion.h1>
-        <div className="mt-4 max-w-3xl space-y-5">
-          <section className="space-y-1.5">
-            <h2 className="text-base font-semibold text-[#f3eff8]">
+        <div className="mt-4 max-w-3xl space-y-3">
+          <details
+            open
+            className="group rounded-xl border border-[rgba(243,239,248,0.08)] bg-[rgba(243,239,248,0.02)] px-4"
+          >
+            <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-base font-semibold text-[#f3eff8] [&::-webkit-details-marker]:hidden">
               What are Quests?
-            </h2>
-            <p className="text-sm text-[#c9c5d4] leading-relaxed">
+              <ChevronDown className="h-4 w-4 text-[#a9a4b8] transition-transform duration-200 group-open:rotate-180" />
+            </summary>
+            <p className="pb-4 text-sm text-[#c9c5d4] leading-relaxed">
               Quests are short-term, production-grade challenges designed to
               simulate real-world industry tasks. Instead of following rigid
               tutorials, you are given a business problem and the freedom to
               explore, choose your own tools, and architect your own solution.
             </p>
-          </section>
+          </details>
 
-          <section className="space-y-2.5">
-            <h2 className="text-base font-semibold text-[#f3eff8]">
+          <details
+            open
+            className="group rounded-xl border border-[rgba(243,239,248,0.08)] bg-[rgba(243,239,248,0.02)] px-4"
+          >
+            <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-base font-semibold text-[#f3eff8] [&::-webkit-details-marker]:hidden">
               Why participate?
-            </h2>
-            <ul className="space-y-2.5">
+              <ChevronDown className="h-4 w-4 text-[#a9a4b8] transition-transform duration-200 group-open:rotate-180" />
+            </summary>
+            <ul className="space-y-2.5 pb-4">
               {[
                 {
                   lead: 'Get Personalized Pro Feedback:',
@@ -135,7 +143,7 @@ export function QuestsPageClient() {
                 </li>
               ))}
             </ul>
-          </section>
+          </details>
         </div>
       </div>
 
