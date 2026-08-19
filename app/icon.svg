@@ -1,0 +1,23 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="agent" x1="12" y1="10" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#c026d3"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <!-- rounded background -->
+  <rect width="64" height="64" rx="16" fill="#0d1030"/>
+  <!-- antenna -->
+  <line x1="32" y1="8" x2="32" y2="18" stroke="url(#agent)" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="32" cy="7" r="3.5" fill="url(#agent)"/>
+  <!-- head -->
+  <rect x="14" y="18" width="36" height="30" rx="10" fill="url(#agent)"/>
+  <!-- ears -->
+  <rect x="9" y="27" width="5" height="12" rx="2.5" fill="url(#agent)"/>
+  <rect x="50" y="27" width="5" height="12" rx="2.5" fill="url(#agent)"/>
+  <!-- visor -->
+  <rect x="20" y="26" width="24" height="14" rx="7" fill="#0d1030"/>
+  <!-- eyes -->
+  <circle cx="27" cy="33" r="3.4" fill="#e9d5ff"/>
+  <circle cx="37" cy="33" r="3.4" fill="#e9d5ff"/>
+</svg>
