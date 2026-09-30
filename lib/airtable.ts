@@ -43,6 +43,8 @@ function parseQuest(record: Airtable.Record<Airtable.FieldSet>): Quest {
     categoryIds: (f['categories'] as string[]) ?? [],
     detailsUrl: (f['detailsUrl'] as string) ?? undefined,
     submissionUrl: (f['submissionUrl'] as string) ?? undefined,
+    // Records synced before the Academy split have no value — they are regular Quests
+    academyType: ((f['academyType'] as string) || 'Quest') as Quest['academyType'],
     updatedAt: (f['updatedAt'] as string) ?? new Date().toISOString(),
     createdAt: (f['createdAt'] as string) ?? new Date().toISOString(),
   };
@@ -91,6 +93,7 @@ export async function getQuests(params: QuestListParams = {}): Promise<{
   const {
     search = '',
     status = 'all',
+    academyType = 'all',
     sortBy = 'questNumber',
     sortDir = 'asc',
   } = params;
@@ -111,6 +114,10 @@ export async function getQuests(params: QuestListParams = {}): Promise<{
   }).all();
 
   let quests = records.map(parseQuest);
+
+  if (academyType !== 'all') {
+    quests = quests.filter((q) => q.academyType === academyType);
+  }
 
   // Filter by derived status in JS
   if (status && status !== 'all') {
@@ -275,14 +282,13 @@ export interface SyncQuestRow {
   creatorLinkedin?: string;
   detailsUrl?: string;
   submissionUrl?: string;
+  academyType?: string;
 }
 
-function isUnknownFieldError(err: unknown): boolean {
-  return (
-    typeof err === 'object' &&
-    err !== null &&
-    (err as { error?: string }).error === 'UNKNOWN_FIELD_NAME'
-  );
+function isUnknownFieldError(err: unknown, field: string): boolean {
+  if (typeof err !== 'object' || err === null) return false;
+  const e = err as { error?: string; message?: string };
+  return e.error === 'UNKNOWN_FIELD_NAME' && (e.message ?? '').includes(field);
 }
 
 /**
@@ -305,7 +311,12 @@ export async function upsertQuestsFromMonday(rows: SyncQuestRow[]): Promise<{
   const byTitle = new Map<string, string>();
   for (const rec of existing) {
     const f = rec.fields as Record<string, unknown>;
-    if (f['mondayId']) byMondayId.set(String(f['mondayId']), rec.id);
+    if (f['mondayId']) {
+      byMondayId.set(String(f['mondayId']), rec.id);
+      // Already linked to a Monday item — never re-match it by number/title,
+      // otherwise "Academy Quest #1" would overwrite regular "Quest #1".
+      continue;
+    }
     if (f['questNumber']) byQuestNumber.set(String(f['questNumber']), rec.id);
     if (f['title']) byTitle.set(String(f['title']).trim().toLowerCase(), rec.id);
   }
@@ -328,6 +339,7 @@ export async function upsertQuestsFromMonday(rows: SyncQuestRow[]): Promise<{
     if (row.creatorLinkedin) fields.creatorLinkedin = row.creatorLinkedin;
     if (row.detailsUrl) fields.detailsUrl = row.detailsUrl;
     if (row.submissionUrl) fields.submissionUrl = row.submissionUrl;
+    if (row.academyType) fields.academyType = row.academyType;
     return fields;
   };
 
@@ -350,9 +362,14 @@ export async function upsertQuestsFromMonday(rows: SyncQuestRow[]): Promise<{
     try {
       await doWrite(!mondayIdFieldMissing);
     } catch (err) {
-      if (!mondayIdFieldMissing && isUnknownFieldError(err)) {
+      if (!mondayIdFieldMissing && isUnknownFieldError(err, 'mondayId')) {
         mondayIdFieldMissing = true;
         await doWrite(false);
+      } else if (isUnknownFieldError(err, 'academyType')) {
+        // Without it, Academy quests would silently show up on /quests
+        throw new Error(
+          "Airtable has no 'academyType' field — add a single-select field named academyType (options: Quest, Academy Quest) to the Quests table, then sync again."
+        );
       } else {
         throw err;
       }

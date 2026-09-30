@@ -11,11 +11,16 @@ import { SkeletonQuestRow, SkeletonQuestCard } from '@/components/shared/Skeleto
 import { EmptyState } from '@/components/shared/EmptyState';
 import { ChevronLeft, ChevronRight, ChevronDown, Inbox } from 'lucide-react';
 import { useT } from '@/hooks/useT';
-import type { QuestStatus, QuestListParams } from '@/types';
+import type { AcademyType, QuestStatus, QuestListParams } from '@/types';
 
 const PAGE_SIZE = 20;
 
-export function QuestsPageClient() {
+interface QuestsPageClientProps {
+  academyType?: AcademyType;
+}
+
+export function QuestsPageClient({ academyType = 'Quest' }: QuestsPageClientProps) {
+  const isAcademy = academyType === 'Academy Quest';
   const t = useT();
   const isMobile = useIsMobile();
   const [search, setSearch] = useState('');
@@ -27,6 +32,7 @@ export function QuestsPageClient() {
     pageSize: PAGE_SIZE,
     search,
     status,
+    academyType,
     sortBy: 'questNumber',
     sortDir: 'desc',
   };
@@ -57,8 +63,8 @@ export function QuestsPageClient() {
           className="text-2xl font-bold text-[#f3eff8] mb-1"
           style={{ fontFamily: 'var(--font-space-grotesk)' }}
         >
-          Quest{' '}
-          <span className="gradient-text">Vault</span>
+          {isAcademy ? t('page.academyLead') : 'Quest'}{' '}
+          <span className="gradient-text">{isAcademy ? t('page.academyAccent') : 'Vault'}</span>
         </motion.h1>
         <div className="mt-4 max-w-3xl space-y-3">
           <details

@@ -7,6 +7,7 @@ export type QuestStatus =
   | 'Archived'
   | (string & {}); // allow any Airtable single-select value without breaking types
 export type FileType = 'PDF' | 'PNG' | 'JPG' | 'JPEG' | 'ZIP' | 'MD' | 'DOCX' | 'TXT' | 'OTHER';
+export type AcademyType = 'Quest' | 'Academy Quest';
 export type Locale = 'en' | 'he';
 export type Direction = 'ltr' | 'rtl';
 
@@ -34,6 +35,7 @@ export interface Quest {
   categories?: Category[];
   detailsUrl?: string;
   submissionUrl?: string;
+  academyType: AcademyType;
   updatedAt: string;
   createdAt: string;
 }
@@ -75,6 +77,7 @@ export interface QuestListParams {
   pageSize?: number;
   search?: string;
   status?: QuestStatus | 'all';
+  academyType?: AcademyType | 'all';
   sortBy?: 'title' | 'createdAt' | 'updatedAt' | 'status' | 'questNumber';
   sortDir?: 'asc' | 'desc';
 }

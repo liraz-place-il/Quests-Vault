@@ -62,6 +62,7 @@ function mapItemToQuestRow(item: MondayItem): SyncQuestRow {
       'register link',
       'registration link'
     ),
+    academyType: pick(item, 'academy type'),
   };
 }
 

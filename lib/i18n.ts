@@ -9,6 +9,8 @@ export const translations = {
   en: {
     'nav.admin': 'Admin',
     'nav.backToVault': '← Back to Vault',
+    'page.academyLead': 'Academy',
+    'page.academyAccent': 'Quests',
 
     'about.whatTitle': 'What are Quests?',
     'about.whatBody':
@@ -70,6 +72,8 @@ export const translations = {
   he: {
     'nav.admin': 'ניהול',
     'nav.backToVault': '← חזרה למאגר',
+    'page.academyLead': 'משימות',
+    'page.academyAccent': 'אקדמיה',
 
     'about.whatTitle': 'מה הן משימות (Quests)?',
     'about.whatBody':

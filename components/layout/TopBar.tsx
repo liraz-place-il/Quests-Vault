@@ -28,6 +28,7 @@ export function TopBar() {
             priority
           />
         </div>
+
       </div>
 
       {/* Right side */}

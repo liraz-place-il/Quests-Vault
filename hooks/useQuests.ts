@@ -9,6 +9,7 @@ async function fetchQuests(params: QuestListParams): Promise<ApiResponse<Quest[]
   if (params.pageSize) searchParams.set('pageSize', String(params.pageSize));
   if (params.search) searchParams.set('search', params.search);
   if (params.status) searchParams.set('status', params.status);
+  if (params.academyType) searchParams.set('academyType', params.academyType);
   if (params.sortBy) searchParams.set('sortBy', params.sortBy);
   if (params.sortDir) searchParams.set('sortDir', params.sortDir);
 

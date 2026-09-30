@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
       pageSize: Number(searchParams.get('pageSize') ?? 20),
       search: searchParams.get('search') ?? '',
       status: (searchParams.get('status') as QuestListParams['status']) ?? 'all',
+      academyType: (searchParams.get('academyType') as QuestListParams['academyType']) ?? 'all',
       sortBy: (searchParams.get('sortBy') as QuestListParams['sortBy']) ?? 'questNumber',
       sortDir: (searchParams.get('sortDir') as QuestListParams['sortDir']) ?? 'asc',
     };

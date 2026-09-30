@@ -8,9 +8,31 @@ import { useUpdateQuest, useDeleteQuest } from '@/hooks/useQuests';
 import { QuestStatusBadge } from '@/components/quest/QuestStatusBadge';
 import { formatDate } from '@/lib/utils';
 import { Trash2, Pencil, Plus, AlertCircle, RefreshCw } from 'lucide-react';
-import type { Quest, QuestStatus } from '@/types';
+import type { AcademyType, Quest, QuestStatus } from '@/types';
 
 const STATUSES: QuestStatus[] = ['Active', 'Pending', 'Completed', 'Draft', 'Archived'];
+
+const TYPE_FILTERS: { value: AcademyType | 'all'; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'Quest', label: 'Quest' },
+  { value: 'Academy Quest', label: 'Academy Quest' },
+];
+
+function AcademyTypeBadge({ type }: { type: AcademyType }) {
+  const academy = type === 'Academy Quest';
+  return (
+    <span
+      className="inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold"
+      style={
+        academy
+          ? { background: 'rgba(255,48,194,0.12)', color: '#ff30c2', border: '1px solid rgba(255,48,194,0.3)' }
+          : { background: 'rgba(48,145,255,0.12)', color: '#3091ff', border: '1px solid rgba(48,145,255,0.3)' }
+      }
+    >
+      {type}
+    </span>
+  );
+}
 
 export function AdminPageClient() {
   const { data, isLoading } = useQuests({ pageSize: 100, sortBy: 'questNumber', sortDir: 'asc' });
@@ -21,7 +43,10 @@ export function AdminPageClient() {
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
-  const quests = data?.data ?? [];
+  const [typeFilter, setTypeFilter] = useState<AcademyType | 'all'>('all');
+
+  const allQuests = data?.data ?? [];
+  const quests = typeFilter === 'all' ? allQuests : allQuests.filter((q) => q.academyType === typeFilter);
 
   const handleStatusChange = (quest: Quest, status: QuestStatus) => {
     updateQuest({ id: quest.id, data: { status } });
@@ -90,7 +115,13 @@ export function AdminPageClient() {
             href="/quests"
             className="text-sm text-[#c9c5d4] hover:text-[#f3eff8] transition-colors"
           >
-            ← Back to Vault
+            /quests ↗
+          </a>
+          <a
+            href="/academy"
+            className="text-sm text-[#c9c5d4] hover:text-[#f3eff8] transition-colors"
+          >
+            /academy ↗
           </a>
         </div>
       </div>
@@ -156,9 +187,33 @@ export function AdminPageClient() {
       {/* Quest list */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-[#c9c5d4] uppercase tracking-wider">
-            Quests
-          </h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-sm font-semibold text-[#c9c5d4] uppercase tracking-wider">
+              Quests
+            </h2>
+            <div className="flex items-center gap-1" role="group" aria-label="Filter by type">
+              {TYPE_FILTERS.map((f) => {
+                const active = typeFilter === f.value;
+                const count = f.value === 'all' ? allQuests.length : allQuests.filter((q) => q.academyType === f.value).length;
+                return (
+                  <button
+                    key={f.value}
+                    onClick={() => setTypeFilter(f.value)}
+                    aria-pressed={active}
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                      active ? 'text-[#f3eff8]' : 'text-[#a9a4b8] hover:text-[#f3eff8]'
+                    }`}
+                    style={{
+                      background: active ? 'rgba(243,239,248,0.08)' : 'transparent',
+                      border: `1px solid ${active ? 'rgba(243,239,248,0.14)' : 'rgba(243,239,248,0.06)'}`,
+                    }}
+                  >
+                    {f.label} <span className="opacity-60">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           <button
             onClick={() => window.alert('Quest creation form coming in Phase 2.\nFor now, add quests directly in Airtable.')}
             className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
@@ -187,7 +242,7 @@ export function AdminPageClient() {
                   className="border-b border-[rgba(243,239,248,0.06)]"
                   style={{ background: 'rgba(243,239,248,0.02)' }}
                 >
-                  {['ID', 'Title', 'Status', 'Start', 'End', 'Actions'].map((h) => (
+                  {['ID', 'Title', 'Type', 'Status', 'Start', 'End', 'Actions'].map((h) => (
                     <th
                       key={h}
                       className="px-4 py-2.5 text-start text-[10px] font-semibold uppercase tracking-wider text-[#a9a4b8]"
@@ -208,6 +263,9 @@ export function AdminPageClient() {
                     </td>
                     <td className="px-4 py-2.5">
                       <span className="text-[#f3eff8] text-xs font-medium">{quest.title}</span>
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <AcademyTypeBadge type={quest.academyType} />
                     </td>
                     <td className="px-4 py-2.5">
                       <select

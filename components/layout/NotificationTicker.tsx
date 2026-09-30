@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Sparkles, Send } from 'lucide-react';
 import { useQuests } from '@/hooks/useQuests';
 import { useUIStore } from '@/store/ui.store';
@@ -19,7 +20,10 @@ function questLabel(quest: Quest, locale: 'en' | 'he'): string {
 }
 
 export function NotificationTicker() {
-  const { data } = useQuests({ pageSize: 100 });
+  // Only announce quests belonging to the section being viewed
+  const pathname = usePathname();
+  const academyType = pathname?.startsWith('/academy') ? 'Academy Quest' : 'Quest';
+  const { data } = useQuests({ pageSize: 100, academyType });
   const { openQuestDrawer, locale } = useUIStore();
   const t = useT();
 
