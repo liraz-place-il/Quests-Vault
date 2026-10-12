@@ -17,17 +17,17 @@ export function MarkdownRenderer({ content, className }: Props) {
       className={cn(
         'prose prose-sm max-w-none',
         'prose-invert',
-        'prose-headings:text-[#f3eff8] prose-headings:font-semibold',
-        'prose-p:text-[#c9c5d4] prose-p:leading-relaxed',
-        'prose-a:text-[#3091ff] prose-a:no-underline hover:prose-a:underline',
-        'prose-strong:text-[#f3eff8]',
-        'prose-code:text-[#ff30c2] prose-code:bg-[rgba(255,48,194,0.08)] prose-code:px-1 prose-code:rounded',
-        'prose-pre:bg-[#141e47] prose-pre:border prose-pre:border-[rgba(243,239,248,0.08)]',
-        'prose-blockquote:border-l-[#3091ff] prose-blockquote:text-[#c9c5d4]',
-        'prose-hr:border-[rgba(243,239,248,0.08)]',
-        'prose-ul:text-[#c9c5d4] prose-ol:text-[#c9c5d4]',
-        'prose-li:marker:text-[#3091ff]',
-        dir === 'rtl' && 'text-right',
+        'prose-headings:text-foreground prose-headings:font-heading prose-headings:font-bold',
+        'prose-p:text-muted-foreground prose-p:leading-relaxed',
+        'prose-a:text-foreground prose-a:underline prose-a:decoration-brand prose-a:underline-offset-4 hover:prose-a:text-brand',
+        'prose-strong:text-foreground',
+        'prose-code:text-brand prose-code:bg-brand/10 prose-code:px-1 prose-code:rounded',
+        'prose-pre:bg-popover prose-pre:border prose-pre:border-border prose-pre:overflow-x-auto',
+        'prose-blockquote:border-s-brand prose-blockquote:text-muted-foreground',
+        'prose-hr:border-border',
+        'prose-ul:text-muted-foreground prose-ol:text-muted-foreground',
+        'prose-li:marker:text-brand',
+        'text-start',
         className
       )}
     >

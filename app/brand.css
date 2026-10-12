@@ -1,0 +1,164 @@
+/* ==========================================================================
+   אנו באנו — Brand tokens (family system)
+   Source: "Branding Anu Banu.pdf" (2026). Colours read from the PDF vectors.
+
+   One system for the whole family: dark navy + white + ONE accent colour.
+   Every accent shares the same OKLCH lightness (77%) and chroma (0.117);
+   only the hue changes per brand. Switch brand with <html data-brand="…">.
+   Switch theme with <html data-theme="dark|light"> (default: light).
+   ========================================================================== */
+
+:root {
+  /* ---- Core (shared by every brand) ---- */
+  --ab-navy: #252C52;          /* oklch(30.7% 0.069 273.8) — main dark, body text on light */
+  --ab-navy-deep: #1F2233;     /* darkest corner of the hero gradient */
+  --ab-navy-royal: #2E3C85;    /* mid-tone of the hero gradient */
+  --ab-white: #FFFFFF;
+
+  /* Neutrals (derived from navy hue, for UI chrome) */
+  --ab-gray-50: #F5F6FA;
+  --ab-gray-100: #ECEEF4;
+  --ab-gray-200: #DCDFEA;
+  --ab-gray-400: #9CA1B8;
+  --ab-gray-600: #5B6180;      /* muted text on white — 6.1:1 */
+  --ab-gray-700: #444A6A;
+
+  /* ---- Family accents (reference) ---- */
+  --ab-accent-anu-banu:    #4EC5EA; /* oklch(77% 0.117 222) טורקיז */
+  --ab-accent-hinuch-tech: #7BC98C; /* oklch(77% 0.117 150) ירוק   */
+  --ab-accent-ir-medina:   #DEAB58; /* oklch(77% 0.117  78) כתום   */
+  --ab-accent-place-il:    #F494A9; /* oklch(77% 0.117   6) ורוד   */
+  --ab-accent-build-up:    #B9A6F8; /* oklch(77% 0.117 294) סגול   */
+
+  /* ---- Active brand (default = אנו באנו) ---- */
+  --brand-hue: 222.1;
+  --brand-accent: #4EC5EA;        /* shapes, arrows, highlights (buttons are navy, see --button-*) */
+  --brand-accent-hover: #31AED2;  /* oklch(70% 0.117 H) */
+  --brand-accent-strong: #006F8E; /* oklch(50% 0.105 H) — accent TEXT/links on white (≥5.7:1) */
+  --brand-accent-subtle: #BBE6F6; /* oklch(90% 0.05 H)  */
+  --brand-accent-soft: #DDF3FB;   /* oklch(95% 0.025 H) — tinted section bg */
+  --brand-on-accent: var(--ab-navy); /* text on accent fill: navy (≥6.2:1), never white */
+
+  /* ---- Primary button: dark blue (navy) on light surfaces ---- */
+  --button-bg: var(--ab-navy);
+  --button-fg: var(--ab-white);
+  --button-bg-hover: var(--ab-navy-royal);
+
+  /* ---- Typography ---- */
+  /* Index = brand display font (commercial, bilingual). Falls back to IBM Plex Sans Hebrew. */
+  --font-display: "Index", "IBM Plex Sans Hebrew", "Rubik", system-ui, sans-serif;
+  /* Google Sans = body font. Falls back to Rubik (Hebrew + Latin, similar round geometry). */
+  --font-body: "Google Sans", "Google Sans Text", "Rubik", "Heebo", system-ui, sans-serif;
+
+  --weight-regular: 400;  /* running text — default */
+  --weight-medium: 500;   /* sub-headings, data, buttons, inline emphasis */
+  --weight-bold: 700;     /* main headings & key messages, short texts only */
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.75rem;
+  --text-4xl: 3.75rem;
+  --leading-tight: 1.15;
+  --leading-body: 1.6;
+
+  /* ---- Space, shape, motion ---- */
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+  --space-6: 1.5rem;  --space-8: 2rem;   --space-12: 3rem;   --space-16: 4rem; --space-24: 6rem;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --radius-portrait: 50%;          /* portraits sit in a round brand-colour frame */
+  --shadow-none: none;             /* brand is flat: no coloured shadows */
+  --shadow-card: 0 1px 2px rgb(37 44 82 / .06), 0 4px 16px rgb(37 44 82 / .06);
+  --ease: cubic-bezier(.2, .7, .2, 1);
+
+  /* ---- Hero gradient (cover of the brand book) ---- */
+  --ab-gradient-hero:
+    radial-gradient(120% 120% at 0% 100%, #4EC5EA 0%, rgb(78 197 234 / 0) 55%),
+    linear-gradient(200deg, #2E3C85 0%, #252C52 55%, #1F2233 100%);
+
+  /* ---- Semantic (light theme = default) ---- */
+  --color-bg: var(--ab-white);
+  --color-surface: var(--ab-gray-50);
+  --color-surface-raised: var(--ab-white);
+  --color-text: var(--ab-navy);
+  --color-text-muted: var(--ab-gray-600);
+  --color-border: var(--ab-gray-200);
+  --color-link: var(--brand-accent-strong);
+  --color-focus: var(--brand-accent);
+  --logo-variant: "on-light";
+  color-scheme: light;
+}
+
+/* ---- Dark theme: the brand's native look (navy bg, white logo, coloured arrow) ---- */
+[data-theme="dark"] {
+  --color-bg: var(--ab-navy);
+  --color-surface: #2B3360;
+  --color-surface-raised: #323A6A;
+  --color-text: var(--ab-white);
+  --color-text-muted: #C3C7DA;
+  --color-border: rgb(255 255 255 / .14);
+  --color-link: var(--brand-accent);   /* accents pass ≥6:1 on navy */
+  --color-focus: var(--brand-accent);
+  --logo-variant: "on-dark";
+  /* navy button would vanish on navy: on dark surfaces the primary button flips to accent fill + navy text */
+  --button-bg: var(--brand-accent);
+  --button-fg: var(--ab-navy);
+  --button-bg-hover: var(--brand-accent-hover);
+  color-scheme: dark;
+}
+
+/* ---- Brand switch ---- */
+[data-brand="anu-banu"] {
+  --brand-hue: 222.1;
+  --brand-accent: #4EC5EA; --brand-accent-hover: #31AED2; --brand-accent-strong: #006F8E;
+  --brand-accent-subtle: #BBE6F6; --brand-accent-soft: #DDF3FB;
+}
+[data-brand="hinuch-tech"] {
+  --brand-hue: 149.9;
+  --brand-accent: #7BC98C; --brand-accent-hover: #65B377; --brand-accent-strong: #2F7442;
+  --brand-accent-subtle: #C8E8CD; --brand-accent-soft: #E3F4E6;
+}
+[data-brand="ir-medina"] {
+  --brand-hue: 77.7;
+  --brand-accent: #DEAB58; --brand-accent-hover: #C69440; --brand-accent-strong: #845A00;
+  --brand-accent-subtle: #F1DBBA; --brand-accent-soft: #F8EDDC;
+}
+[data-brand="place-il"] {
+  --brand-hue: 6.1;
+  --brand-accent: #F494A9; --brand-accent-hover: #DB7E93; --brand-accent-strong: #94475A;
+  --brand-accent-subtle: #FDD1D9; --brand-accent-soft: #FEE8EC;
+}
+[data-brand="build-up"] {
+  --brand-hue: 294.1;
+  --brand-accent: #B9A6F8; --brand-accent-hover: #A38FE0; --brand-accent-strong: #675699;
+  --brand-accent-subtle: #DFD8FD; --brand-accent-soft: #EFECFE;
+}
+
+/* ---- Base ---- */
+/* Quest Vault: direction is driven by the dir attribute (LocaleSync), so the
+   template's `html { direction: rtl; }` is intentionally omitted here. */
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, .ab-display {
+  font-family: var(--font-display);
+  line-height: var(--leading-tight);
+  font-weight: var(--weight-bold);
+  margin-block: 0 var(--space-4);
+}
+h3, h4 { font-weight: var(--weight-medium); }
+a { color: var(--color-link); }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }

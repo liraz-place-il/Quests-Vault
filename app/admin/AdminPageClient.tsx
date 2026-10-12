@@ -22,12 +22,11 @@ function AcademyTypeBadge({ type }: { type: AcademyType }) {
   const academy = type === 'Academy Quest';
   return (
     <span
-      className="inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold"
-      style={
-        academy
-          ? { background: 'rgba(255,48,194,0.12)', color: '#ff30c2', border: '1px solid rgba(255,48,194,0.3)' }
-          : { background: 'rgba(48,145,255,0.12)', color: '#3091ff', border: '1px solid rgba(48,145,255,0.3)' }
-      }
+      // Quest = accent fill, Academy Quest = white outline — one brand hue,
+      // told apart by fill vs outline (and the label itself).
+      className={`inline-flex items-center whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-medium ${
+        academy ? 'border-line-strong text-foreground' : 'border-brand bg-brand text-on-brand'
+      }`}
     >
       {type}
     </span>
@@ -84,42 +83,36 @@ export function AdminPageClient() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <motion.h1
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-2xl font-bold text-[#f3eff8]"
-            style={{ fontFamily: 'var(--font-space-grotesk)' }}
+            className="font-heading text-3xl font-bold text-foreground m-0"
           >
             Admin{' '}
-            <span className="gradient-text">Dashboard</span>
+            <span className="text-brand">Dashboard</span>
           </motion.h1>
-          <p className="text-sm text-[#a9a4b8] mt-1">Manage quests</p>
+          <p className="text-sm text-muted-foreground mt-1">Manage quests</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleSync}
             disabled={syncing}
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-150 active:scale-[0.98] disabled:opacity-60"
-            style={{
-              background: 'linear-gradient(135deg, #ff30c2, #3091ff)',
-              color: '#fff',
-              boxShadow: syncing ? 'none' : '0 2px 14px rgba(255,48,194,0.25)',
-            }}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary-hover active:scale-[0.98] disabled:opacity-60"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${syncing ? 'animate-spin' : ''}`} />
             {syncing ? 'Syncing…' : 'Sync from Monday'}
           </button>
           <a
             href="/quests"
-            className="text-sm text-[#c9c5d4] hover:text-[#f3eff8] transition-colors"
+            className="text-sm text-muted-foreground underline decoration-brand underline-offset-4 hover:text-foreground transition-colors"
           >
             /quests ↗
           </a>
           <a
             href="/academy"
-            className="text-sm text-[#c9c5d4] hover:text-[#f3eff8] transition-colors"
+            className="text-sm text-muted-foreground underline decoration-brand underline-offset-4 hover:text-foreground transition-colors"
           >
             /academy ↗
           </a>
@@ -129,20 +122,11 @@ export function AdminPageClient() {
       {/* Sync result */}
       {syncMessage && (
         <div
-          className="rounded-xl px-4 py-3 text-sm"
-          style={
+          className={`rounded-xl border bg-card px-4 py-3 text-sm ${
             syncMessage.startsWith('Sync failed')
-              ? {
-                  background: 'rgba(255, 90, 95, 0.08)',
-                  border: '1px solid rgba(255, 90, 95, 0.25)',
-                  color: '#FF5A5F',
-                }
-              : {
-                  background: 'rgba(0, 214, 143, 0.08)',
-                  border: '1px solid rgba(0, 214, 143, 0.25)',
-                  color: '#00D68F',
-                }
-          }
+              ? 'border-danger/40 text-danger'
+              : 'border-border text-foreground'
+          }`}
         >
           {syncMessage}
         </div>
@@ -150,18 +134,14 @@ export function AdminPageClient() {
 
       {/* Notice */}
       <div
-        className="flex items-start gap-3 rounded-xl p-4 text-sm"
-        style={{
-          background: 'rgba(48, 145, 255, 0.05)',
-          border: '1px solid rgba(48, 145, 255, 0.15)',
-        }}
+        className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 text-sm"
       >
-        <AlertCircle className="h-4 w-4 text-[#3091ff] shrink-0 mt-0.5" />
+        <AlertCircle className="h-4 w-4 text-brand shrink-0 mt-0.5" />
         <div>
-          <p className="text-[#3091ff] font-medium">Admin panel is open during development</p>
-          <p className="text-[#a9a4b8] mt-0.5">
+          <p className="text-foreground font-medium">Admin panel is open during development</p>
+          <p className="text-muted-foreground mt-0.5">
             Authentication will be added in Phase 3. To manage quests and assets, you can also edit them directly in your{' '}
-            <span className="text-[#c9c5d4]">Airtable base</span>.
+            <span className="text-foreground">Airtable base</span>.
           </p>
         </div>
       </div>
@@ -176,19 +156,19 @@ export function AdminPageClient() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="rounded-xl border border-[rgba(243,239,248,0.07)] bg-[#0d1638] p-4"
+            className="rounded-xl border border-border bg-card p-4"
           >
-            <p className="text-2xl font-bold text-[#f3eff8]">{stat.value}</p>
-            <p className="text-xs text-[#a9a4b8] mt-1">{stat.label}</p>
+            <p className="font-heading text-3xl font-medium text-foreground">{stat.value}</p>
+            <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
           </div>
         ))}
       </div>
 
       {/* Quest list */}
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <h2 className="text-sm font-semibold text-[#c9c5d4] uppercase tracking-wider">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider m-0">
               Quests
             </h2>
             <div className="flex items-center gap-1" role="group" aria-label="Filter by type">
@@ -200,13 +180,11 @@ export function AdminPageClient() {
                     key={f.value}
                     onClick={() => setTypeFilter(f.value)}
                     aria-pressed={active}
-                    className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                      active ? 'text-[#f3eff8]' : 'text-[#a9a4b8] hover:text-[#f3eff8]'
+                    className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                      active
+                        ? 'border-brand bg-brand text-on-brand'
+                        : 'border-border text-muted-foreground hover:text-foreground hover:border-line-strong'
                     }`}
-                    style={{
-                      background: active ? 'rgba(243,239,248,0.08)' : 'transparent',
-                      border: `1px solid ${active ? 'rgba(243,239,248,0.14)' : 'rgba(243,239,248,0.06)'}`,
-                    }}
                   >
                     {f.label} <span className="opacity-60">{count}</span>
                   </button>
@@ -216,12 +194,7 @@ export function AdminPageClient() {
           </div>
           <button
             onClick={() => window.alert('Quest creation form coming in Phase 2.\nFor now, add quests directly in Airtable.')}
-            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,48,194,0.15), rgba(48,145,255,0.15))',
-              color: '#ff30c2',
-              border: '1px solid rgba(255,48,194,0.25)',
-            }}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-line-strong px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-foreground/5"
           >
             <Plus className="h-3.5 w-3.5" />
             New Quest
@@ -229,23 +202,22 @@ export function AdminPageClient() {
         </div>
 
         {isLoading ? (
-          <div className="text-sm text-[#a9a4b8] py-4">Loading quests…</div>
+          <div className="text-sm text-subtle py-4">Loading quests…</div>
         ) : quests.length === 0 ? (
-          <div className="text-sm text-[#a9a4b8] py-4">
+          <div className="text-sm text-subtle py-4">
             No quests found. Add your Airtable credentials to .env.local to see data.
           </div>
         ) : (
-          <div className="rounded-xl border border-[rgba(243,239,248,0.06)] overflow-hidden">
+          <div className="rounded-xl border border-border overflow-x-auto scrollbar-thin">
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr
-                  className="border-b border-[rgba(243,239,248,0.06)]"
-                  style={{ background: 'rgba(243,239,248,0.02)' }}
+                  className="border-b border-border bg-card"
                 >
                   {['ID', 'Title', 'Type', 'Status', 'Start', 'End', 'Actions'].map((h) => (
                     <th
                       key={h}
-                      className="px-4 py-2.5 text-start text-[10px] font-semibold uppercase tracking-wider text-[#a9a4b8]"
+                      className="px-4 py-2.5 text-start text-[11px] font-medium uppercase tracking-wider text-subtle whitespace-nowrap"
                     >
                       {h}
                     </th>
@@ -256,13 +228,13 @@ export function AdminPageClient() {
                 {quests.map((quest) => (
                   <tr
                     key={quest.id}
-                    className="border-b border-[rgba(243,239,248,0.03)]"
+                    className="border-b border-border last:border-b-0"
                   >
                     <td className="px-4 py-2.5">
-                      <span className="font-mono text-xs text-[#a9a4b8]">{quest.questNumber}</span>
+                      <span className="font-mono text-xs text-subtle">{quest.questNumber}</span>
                     </td>
                     <td className="px-4 py-2.5">
-                      <span className="text-[#f3eff8] text-xs font-medium">{quest.title}</span>
+                      <span className="text-foreground text-xs font-medium">{quest.title}</span>
                     </td>
                     <td className="px-4 py-2.5">
                       <AcademyTypeBadge type={quest.academyType} />
@@ -272,12 +244,7 @@ export function AdminPageClient() {
                         value={quest.status}
                         onChange={(e) => handleStatusChange(quest, e.target.value as QuestStatus)}
                         disabled={updating}
-                        className="text-xs rounded-lg px-2 py-1 outline-none cursor-pointer"
-                        style={{
-                          background: '#141e47',
-                          border: '1px solid rgba(243,239,248,0.08)',
-                          color: '#c9c5d4',
-                        }}
+                        className="text-xs rounded-lg border border-input bg-popover px-2 py-1 text-foreground outline-none cursor-pointer focus:border-brand"
                       >
                         {STATUSES.map((s) => (
                           <option key={s} value={s}>{s}</option>
@@ -285,16 +252,16 @@ export function AdminPageClient() {
                       </select>
                     </td>
                     <td className="px-4 py-2.5">
-                      <span className="text-xs text-[#a9a4b8]">{formatDate(quest.startDate)}</span>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">{formatDate(quest.startDate)}</span>
                     </td>
                     <td className="px-4 py-2.5">
-                      <span className="text-xs text-[#a9a4b8]">{formatDate(quest.endDate)}</span>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">{formatDate(quest.endDate)}</span>
                     </td>
                     <td className="px-4 py-2.5">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => window.alert('Quest edit form coming in Phase 2.\nEdit directly in Airtable for now.')}
-                          className="p-1 rounded text-[#a9a4b8] hover:text-[#c9c5d4] transition-colors"
+                          className="p-1 rounded text-subtle hover:text-foreground transition-colors"
                           title="Edit quest"
                         >
                           <Pencil className="h-3.5 w-3.5" />
@@ -302,7 +269,7 @@ export function AdminPageClient() {
                         <button
                           onClick={() => handleDelete(quest)}
                           disabled={deleting}
-                          className="p-1 rounded text-[#a9a4b8] hover:text-[#FF5A5F] transition-colors"
+                          className="p-1 rounded text-subtle hover:text-danger transition-colors"
                           title="Delete quest"
                         >
                           <Trash2 className="h-3.5 w-3.5" />

@@ -26,36 +26,32 @@ export function AssetDetailModal({ asset, open, onClose }: Props) {
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent
-        className="max-w-2xl border-[rgba(243,239,248,0.08)] bg-[#0d1638] p-0 overflow-hidden"
-        style={{ boxShadow: '0 25px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(48,145,255,0.15)' }}
+        className="max-w-2xl border-border bg-card p-0 overflow-hidden"
       >
         {/* Header */}
-        <div className="p-6 border-b border-[rgba(243,239,248,0.06)]">
+        <div className="p-6 border-b border-border">
           <DialogHeader>
             <div className="flex items-center gap-2 mb-3">
               <AssetFileTypeBadge fileType={asset.fileType} />
               <span
-                className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium"
-                style={{
-                  background: asset.isPublic ? 'rgba(0, 214, 143, 0.1)' : 'rgba(255,176,32,0.1)',
-                  color: asset.isPublic ? '#00D68F' : '#FFB020',
-                  border: `1px solid ${asset.isPublic ? 'rgba(0,214,143,0.25)' : 'rgba(255,176,32,0.25)'}`,
-                }}
+                className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium ${
+                  asset.isPublic ? 'border-transparent bg-foreground/10 text-foreground' : 'border-border text-subtle'
+                }`}
               >
                 <Eye className="h-2.5 w-2.5" />
                 {asset.isPublic ? 'Public' : 'Private'}
               </span>
             </div>
-            <DialogTitle className="text-[#f3eff8] text-xl font-semibold leading-tight">
+            <DialogTitle className="font-heading text-foreground text-xl font-bold leading-tight">
               {title}
             </DialogTitle>
             {description && (
-              <p className="text-[#c9c5d4] text-sm mt-2 leading-relaxed">{description}</p>
+              <p className="text-muted-foreground text-sm mt-2 leading-relaxed">{description}</p>
             )}
           </DialogHeader>
 
           {/* Meta row */}
-          <div className="flex flex-wrap gap-4 mt-4 text-xs text-[#a9a4b8]">
+          <div className="flex flex-wrap gap-4 mt-4 text-xs text-subtle">
             <span className="flex items-center gap-1.5">
               <User className="h-3 w-3" />
               {asset.creatorName}
@@ -85,23 +81,19 @@ export function AssetDetailModal({ asset, open, onClose }: Props) {
         )}
 
         {!richContent && (
-          <div className="p-6 text-[#a9a4b8] text-sm italic">
+          <div className="p-6 text-subtle text-sm italic">
             No additional details available.
           </div>
         )}
 
         {/* Footer */}
-        <div className="p-4 border-t border-[rgba(243,239,248,0.06)] flex justify-end">
+        <div className="p-4 border-t border-border flex justify-end">
           <button
             onClick={() => download(asset.id)}
             disabled={isPending}
-            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150"
-            style={{
-              background: 'linear-gradient(135deg, #ff30c2, #3091ff)',
-              color: '#fff',
-              boxShadow: isPending ? 'none' : '0 0 16px rgba(255,48,194,0.3)',
-              opacity: isPending ? 0.7 : 1,
-            }}
+            className={`inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary-hover ${
+              isPending ? 'opacity-70' : ''
+            }`}
           >
             <Download className="h-4 w-4" />
             {isPending ? 'Preparing…' : 'Download'}

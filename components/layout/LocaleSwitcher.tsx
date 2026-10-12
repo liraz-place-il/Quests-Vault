@@ -8,11 +8,7 @@ export function LocaleSwitcher() {
   return (
     <button
       onClick={() => setLocale(locale === 'en' ? 'he' : 'en')}
-      className="rounded-lg px-3 py-1.5 text-xs font-medium text-[#c9c5d4] hover:text-[#f3eff8] transition-colors"
-      style={{
-        background: 'rgba(243,239,248,0.04)',
-        border: '1px solid rgba(243,239,248,0.06)',
-      }}
+      className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-line-strong transition-colors"
       title={locale === 'en' ? 'Switch to Hebrew' : 'Switch to English'}
     >
       {locale === 'en' ? '🇮🇱 עב' : '🇺🇸 EN'}

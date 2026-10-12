@@ -17,13 +17,13 @@ export function EmptyState({ title, description, icon, action, className }: Prop
       )}
     >
       {icon && (
-        <div className="mb-4 text-[#a9a4b8] opacity-60">
+        <div className="mb-4 text-subtle">
           {icon}
         </div>
       )}
-      <p className="text-[#f3eff8] font-medium text-base mb-1">{title}</p>
+      <p className="text-foreground font-medium text-base mb-1">{title}</p>
       {description && (
-        <p className="text-[#a9a4b8] text-sm max-w-xs">{description}</p>
+        <p className="text-muted-foreground text-sm max-w-xs">{description}</p>
       )}
       {action && <div className="mt-4">{action}</div>}
     </div>

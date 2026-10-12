@@ -61,56 +61,54 @@ export function isLateStatus(status: QuestStatus): boolean {
 export const LATE_SUBMISSION_HINT =
   'Oh, you missed the date of this quest, however, you can still complete the quest and submit it to get a personal feedback.';
 
-type StatusStyle = { bg: string; text: string; border: string; glow: string };
+type StatusStyle = { bg: string; text: string; border: string };
+
+// Brand tokens (app/brand.css + app/globals.css). Flat, no glow: the brand
+// allows one accent hue, so statuses are told apart by fill vs outline vs
+// plain, plus the localized label — never by colour alone.
+const tint = (token: string, pct: number) =>
+  `color-mix(in oklab, var(${token}) ${pct}%, transparent)`;
 
 const STATUS_STYLES: Record<string, StatusStyle> = {
-  // Neon magenta — live / in-progress states
+  // Live — the only status that uses the accent: solid fill, navy text (6.2:1)
   active: {
-    bg: 'rgba(255, 0, 212, 0.1)',
-    text: '#FF00D4',
-    border: 'rgba(255, 0, 212, 0.3)',
-    glow: 'rgba(255, 0, 212, 0.2)',
+    bg: 'var(--brand-accent)',
+    text: 'var(--brand-on-accent)',
+    border: 'var(--brand-accent)',
   },
-  // Amber — awaiting action
+  // Upcoming — white outline (+ live dot)
   pending: {
-    bg: 'rgba(255, 176, 32, 0.1)',
-    text: '#FFB020',
-    border: 'rgba(255, 176, 32, 0.3)',
-    glow: 'rgba(255, 176, 32, 0.2)',
+    bg: 'transparent',
+    text: 'var(--color-text)',
+    border: 'var(--qv-line-strong)',
   },
-  // Green — done successfully
+  // Done — quiet neutral fill
   completed: {
-    bg: 'rgba(0, 214, 143, 0.1)',
-    text: '#00D68F',
-    border: 'rgba(0, 214, 143, 0.3)',
-    glow: 'rgba(0, 214, 143, 0.2)',
+    bg: tint('--color-text', 10),
+    text: 'var(--color-text-muted)',
+    border: 'transparent',
   },
-  // Soft blue — time-lapsed
   expired: {
-    bg: 'rgba(91, 140, 255, 0.1)',
-    text: '#5B8CFF',
-    border: 'rgba(91, 140, 255, 0.3)',
-    glow: 'rgba(91, 140, 255, 0.2)',
+    bg: 'transparent',
+    text: 'var(--color-text-muted)',
+    border: 'var(--color-border)',
   },
   draft: {
-    bg: 'rgba(107, 114, 128, 0.1)',
-    text: '#9CA3AF',
-    border: 'rgba(107, 114, 128, 0.3)',
-    glow: 'transparent',
+    bg: 'transparent',
+    text: 'var(--qv-text-subtle)',
+    border: 'var(--color-border)',
   },
   archived: {
-    bg: 'rgba(107, 114, 128, 0.08)',
-    text: '#6B7280',
-    border: 'rgba(107, 114, 128, 0.2)',
-    glow: 'transparent',
+    bg: tint('--color-text', 5),
+    text: 'var(--qv-text-subtle)',
+    border: 'transparent',
   },
 };
 
 const DEFAULT_STATUS_STYLE: StatusStyle = {
-  bg: 'rgba(156, 163, 175, 0.1)',
-  text: '#9CA3AF',
-  border: 'rgba(156, 163, 175, 0.3)',
-  glow: 'transparent',
+  bg: 'transparent',
+  text: 'var(--color-text-muted)',
+  border: 'var(--color-border)',
 };
 
 export function getStatusColor(status: QuestStatus): StatusStyle {
@@ -121,29 +119,18 @@ export function getStatusColor(status: QuestStatus): StatusStyle {
 // Which statuses render the pulsing "live" dot
 export const LIVE_STATUSES = new Set(['active', 'pending']);
 
-export function getFileTypeBadgeStyle(fileType: FileType): {
+export function getFileTypeBadgeStyle(_fileType: FileType): {
   bg: string;
   text: string;
   border: string;
 } {
-  switch (fileType) {
-    case 'PDF':
-      return { bg: 'rgba(255, 90, 95, 0.1)', text: '#FF5A5F', border: 'rgba(255, 90, 95, 0.3)' };
-    case 'PNG':
-    case 'JPG':
-    case 'JPEG':
-      return { bg: 'rgba(0, 214, 143, 0.1)', text: '#00D68F', border: 'rgba(0, 214, 143, 0.3)' };
-    case 'ZIP':
-      return { bg: 'rgba(255, 176, 32, 0.1)', text: '#FFB020', border: 'rgba(255, 176, 32, 0.3)' };
-    case 'MD':
-      return { bg: 'rgba(161, 0, 255, 0.1)', text: '#A100FF', border: 'rgba(161, 0, 255, 0.3)' };
-    case 'DOCX':
-      return { bg: 'rgba(91, 140, 255, 0.1)', text: '#5B8CFF', border: 'rgba(91, 140, 255, 0.3)' };
-    case 'TXT':
-      return { bg: 'rgba(156, 163, 175, 0.1)', text: '#9CA3AF', border: 'rgba(156, 163, 175, 0.3)' };
-    default:
-      return { bg: 'rgba(107, 114, 128, 0.1)', text: '#6B7280', border: 'rgba(107, 114, 128, 0.3)' };
-  }
+  // One neutral chip for every file type — the label carries the meaning,
+  // and the brand allows a single accent hue.
+  return {
+    bg: 'color-mix(in oklab, var(--color-text) 6%, transparent)',
+    text: 'var(--color-text-muted)',
+    border: 'var(--color-border)',
+  };
 }
 
 /**

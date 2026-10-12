@@ -24,18 +24,16 @@ export function AssetCard({ asset }: Props) {
   return (
     <>
       <div
-        className="rounded-xl border border-[rgba(243,239,248,0.07)] bg-[#0d1638] p-4 card-hover flex flex-col gap-3"
+        className="rounded-xl border border-border bg-card p-4 card-hover flex flex-col gap-3"
         style={{ minHeight: 160 }}
       >
         {/* Top: file type + visibility */}
         <div className="flex items-center gap-2">
           <AssetFileTypeBadge fileType={asset.fileType} />
           <span
-            className="rounded px-1.5 py-0.5 text-[10px] font-medium"
-            style={{
-              background: asset.isPublic ? 'rgba(0,214,143,0.08)' : 'rgba(255,176,32,0.08)',
-              color: asset.isPublic ? '#00D68F' : '#FFB020',
-            }}
+            className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${
+              asset.isPublic ? 'border-transparent bg-foreground/10 text-foreground' : 'border-border text-subtle'
+            }`}
           >
             {asset.isPublic ? 'Public' : 'Private'}
           </span>
@@ -43,14 +41,14 @@ export function AssetCard({ asset }: Props) {
 
         {/* Title + description */}
         <div className="flex-1">
-          <p className="text-[#f3eff8] font-semibold text-sm leading-snug mb-1">{title}</p>
+          <p className="text-foreground font-medium text-sm leading-snug mb-1">{title}</p>
           {description && (
-            <p className="text-[#a9a4b8] text-xs leading-relaxed">{truncate(description, 100)}</p>
+            <p className="text-muted-foreground text-xs leading-relaxed">{truncate(description, 100)}</p>
           )}
         </div>
 
         {/* Meta */}
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[#a9a4b8]">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-subtle">
           <span className="flex items-center gap-1">
             <User className="h-2.5 w-2.5" />
             {asset.creatorName}
@@ -76,12 +74,7 @@ export function AssetCard({ asset }: Props) {
           <button
             onClick={() => download(asset.id)}
             disabled={isPending}
-            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150 active:scale-[0.97]"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,48,194,0.15), rgba(48,145,255,0.15))',
-              color: '#ff30c2',
-              border: '1px solid rgba(255,48,194,0.25)',
-            }}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary-hover active:scale-[0.97]"
             aria-label={`Download ${title}`}
           >
             <Download className="h-3 w-3" />
@@ -90,15 +83,11 @@ export function AssetCard({ asset }: Props) {
 
           <button
             onClick={() => setDetailOpen(true)}
-            className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium text-[#c9c5d4] hover:text-[#f3eff8] transition-colors duration-150"
-            style={{
-              background: 'rgba(243,239,248,0.04)',
-              border: '1px solid rgba(243,239,248,0.06)',
-            }}
+            className="inline-flex items-center gap-1 rounded-lg border border-line-strong px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors duration-150"
             aria-label={`More details for ${title}`}
           >
             Details
-            <ChevronRight className="h-3 w-3" />
+            <ChevronRight className="h-3 w-3 rtl:-scale-x-100" />
           </button>
         </div>
       </div>

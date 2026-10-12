@@ -9,6 +9,7 @@ import { QuestCard } from '@/components/quest/QuestCard';
 import { QuestFilters } from '@/components/quest/QuestFilters';
 import { SkeletonQuestRow, SkeletonQuestCard } from '@/components/shared/SkeletonCard';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { BrandArrow } from '@/components/shared/BrandArrow';
 import { ChevronLeft, ChevronRight, ChevronDown, Inbox } from 'lucide-react';
 import { useT } from '@/hooks/useT';
 import type { AcademyType, QuestStatus, QuestListParams } from '@/types';
@@ -56,37 +57,45 @@ export function QuestsPageClient({ academyType = 'Quest' }: QuestsPageClientProp
   return (
     <div className="space-y-5">
       {/* Page header */}
-      <div>
+      <div className="relative isolate">
+        {/* Brand arrow — large, cropped by the header box, decorative. Hidden
+            on phones, where the title spans the full width. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-8 bottom-0 end-0 -z-10 hidden w-2/5 overflow-hidden sm:block md:w-1/3"
+        >
+          <BrandArrow className="absolute top-0 end-2 h-56 text-brand opacity-75 md:end-8 md:h-[36rem]" />
+        </div>
+
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl font-bold text-[#f3eff8] mb-1"
-          style={{ fontFamily: 'var(--font-space-grotesk)' }}
+          className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-1"
         >
           {isAcademy ? t('page.academyLead') : 'Quest'}{' '}
-          <span className="gradient-text">{isAcademy ? t('page.academyAccent') : 'Vault'}</span>
+          <span className="text-brand">{isAcademy ? t('page.academyAccent') : 'Vault'}</span>
         </motion.h1>
         <div className="mt-4 max-w-3xl space-y-3">
           <details
             open
-            className="group rounded-xl border border-[rgba(243,239,248,0.08)] bg-[rgba(243,239,248,0.02)] px-4"
+            className="group rounded-xl border border-border bg-card px-4"
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-base font-semibold text-[#f3eff8] [&::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-base font-medium text-foreground [&::-webkit-details-marker]:hidden">
               {t('about.whatTitle')}
-              <ChevronDown className="h-4 w-4 text-[#a9a4b8] transition-transform duration-200 group-open:rotate-180" />
+              <ChevronDown className="h-4 w-4 shrink-0 text-subtle transition-transform duration-200 group-open:rotate-180" />
             </summary>
-            <p className="pb-4 text-sm text-[#c9c5d4] leading-relaxed">
+            <p className="pb-4 text-sm text-muted-foreground leading-relaxed">
               {t('about.whatBody')}
             </p>
           </details>
 
           <details
             open
-            className="group rounded-xl border border-[rgba(243,239,248,0.08)] bg-[rgba(243,239,248,0.02)] px-4"
+            className="group rounded-xl border border-border bg-card px-4"
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-base font-semibold text-[#f3eff8] [&::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-base font-medium text-foreground [&::-webkit-details-marker]:hidden">
               {t('about.whyTitle')}
-              <ChevronDown className="h-4 w-4 text-[#a9a4b8] transition-transform duration-200 group-open:rotate-180" />
+              <ChevronDown className="h-4 w-4 shrink-0 text-subtle transition-transform duration-200 group-open:rotate-180" />
             </summary>
             <ul className="space-y-2.5 pb-4">
               {[
@@ -102,7 +111,7 @@ export function QuestsPageClient({ academyType = 'Quest' }: QuestsPageClientProp
                         href="https://www.linkedin.com/company/place-il/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-semibold text-[#3091ff] hover:underline"
+                        className="font-medium text-foreground underline decoration-brand underline-offset-4 hover:text-brand"
                       >
                         {t('why.spotlightLink')}
                       </a>
@@ -113,15 +122,14 @@ export function QuestsPageClient({ academyType = 'Quest' }: QuestsPageClientProp
               ].map((item) => (
                 <li
                   key={item.lead}
-                  className="flex gap-2.5 text-sm text-[#c9c5d4] leading-relaxed"
+                  className="flex gap-2.5 text-sm text-muted-foreground leading-relaxed"
                 >
                   <span
-                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full"
-                    style={{ background: 'linear-gradient(135deg, #ff30c2, #3091ff)' }}
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand"
                     aria-hidden
                   />
                   <span>
-                    <span className="font-semibold text-[#f3eff8]">{item.lead}</span>
+                    <span className="font-medium text-foreground">{item.lead}</span>
                     {item.rest}
                   </span>
                 </li>
@@ -132,13 +140,7 @@ export function QuestsPageClient({ academyType = 'Quest' }: QuestsPageClientProp
       </div>
 
       {/* Filters */}
-      <div className="sticky top-[57px] z-20 py-3 -mx-4 px-4 md:-mx-6 md:px-6"
-        style={{
-          background: 'rgba(8,14,44,0.92)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(243,239,248,0.04)',
-        }}
-      >
+      <div className="sticky top-[57px] z-20 py-3 -mx-4 px-4 md:-mx-6 md:px-6 bg-background border-b border-border">
         <QuestFilters
           search={search}
           onSearchChange={handleSearch}
@@ -160,7 +162,7 @@ export function QuestsPageClient({ academyType = 'Quest' }: QuestsPageClientProp
             {Array.from({ length: 6 }).map((_, i) => <SkeletonQuestCard key={i} />)}
           </div>
         ) : (
-          <div className="space-y-0 rounded-xl border border-[rgba(243,239,248,0.06)] overflow-hidden">
+          <div className="space-y-0 rounded-xl border border-border overflow-hidden">
             {Array.from({ length: 8 }).map((_, i) => <SkeletonQuestRow key={i} />)}
           </div>
         )
@@ -187,27 +189,25 @@ export function QuestsPageClient({ academyType = 'Quest' }: QuestsPageClientProp
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between pt-2">
-          <span className="text-xs text-[#a9a4b8]">
+          <span className="text-xs text-subtle">
             {t('pagination.info', { page, totalPages, total })}
           </span>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="p-1.5 rounded-lg text-[#a9a4b8] hover:text-[#f3eff8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              style={{ background: 'rgba(243,239,248,0.04)', border: '1px solid rgba(243,239,248,0.06)' }}
+              className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-line-strong disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               aria-label="Previous page"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4 rtl:-scale-x-100" />
             </button>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="p-1.5 rounded-lg text-[#a9a4b8] hover:text-[#f3eff8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              style={{ background: 'rgba(243,239,248,0.04)', border: '1px solid rgba(243,239,248,0.06)' }}
+              className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-line-strong disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               aria-label="Next page"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 rtl:-scale-x-100" />
             </button>
           </div>
         </div>

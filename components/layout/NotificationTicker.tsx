@@ -83,39 +83,25 @@ export function NotificationTicker() {
         }
       }}
       aria-label={isClickable ? `${joined} — open quest details` : joined}
-      className={`relative w-full overflow-hidden border-b border-[rgba(243,239,248,0.08)] py-2 ${
+      className={`relative w-full overflow-hidden border-b border-border bg-card py-2 ${
         isClickable ? 'cursor-pointer' : 'cursor-default'
       }`}
-      style={{
-        background:
-          mode === 'active'
-            ? 'linear-gradient(90deg, rgba(255,48,194,0.16), rgba(48,145,255,0.16))'
-            : 'linear-gradient(90deg, rgba(48,145,255,0.1), rgba(255,48,194,0.1))',
-      }}
     >
       <div className="marquee-track flex w-max whitespace-nowrap">
         {[0, 1].map((dupIndex) => (
           <div key={dupIndex} className="flex items-center gap-3 px-6" aria-hidden={dupIndex === 1}>
             <span
-              className="inline-flex h-1.5 w-1.5 shrink-0 rounded-full animate-pulse"
-              style={{ background: mode === 'active' ? '#ff30c2' : '#3091ff' }}
+              className={`inline-flex h-1.5 w-1.5 shrink-0 rounded-full ${
+                mode === 'active' ? 'bg-brand animate-pulse' : 'bg-muted-foreground'
+              }`}
             />
             <Icon
-              className="h-3.5 w-3.5 shrink-0"
-              style={{ color: mode === 'active' ? '#ff30c2' : '#3091ff' }}
+              className={`h-3.5 w-3.5 shrink-0 ${mode === 'active' ? 'text-brand' : 'text-muted-foreground'}`}
             />
-            <span
-              className="text-xs font-semibold tracking-wide"
-              style={{
-                background: 'linear-gradient(135deg, #ff30c2, #3091ff)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
+            <span dir="auto" className="text-xs font-medium tracking-wide text-foreground">
               {joined}
             </span>
-            <span className="px-6 text-[#a9a4b8]/40">•</span>
+            <span className="px-6 text-subtle">•</span>
           </div>
         ))}
       </div>

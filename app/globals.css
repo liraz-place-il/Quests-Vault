@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* PLACE.IL brand tokens (anu-banu-brand skill). Imported into the base layer so
+   its element defaults (h1, a, body…) never outrank Tailwind utilities. */
+@import "./brand.css" layer(base);
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -7,10 +10,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: 'Google Sans Flex', system-ui, -apple-system, sans-serif;
-  --font-display: 'Google Sans Flex', system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-display);
   --font-mono: ui-monospace, 'SF Mono', monospace;
-  --font-heading: 'Google Sans Flex', system-ui, -apple-system, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -41,51 +43,66 @@
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
 
-  /* Placeground brand palette */
-  --color-brand-magenta: #ff30c2;
-  --color-brand-blue: #3091ff;
-  --color-brand-navy: #080e2c;
-  --color-brand-light: #f3eff8;
-  --color-surface-base: #080e2c;
-  --color-surface: #0d1638;
-  --color-surface-elevated: #141e47;
+  /* App-level brand utilities: bg-brand, text-brand, border-brand/40,
+     text-on-brand, text-subtle, border-line-strong, bg-primary-hover, bg-scrim … */
+  --color-brand: var(--brand-accent);
+  --color-brand-hover: var(--brand-accent-hover);
+  --color-on-brand: var(--brand-on-accent);
+  --color-primary-hover: var(--qv-primary-hover);
+  --color-subtle: var(--qv-text-subtle);
+  --color-line-strong: var(--qv-line-strong);
+  --color-danger: var(--qv-danger);
+  --color-scrim: var(--ab-navy-deep);
 }
 
+/* ---- Semantic mapping: ShadCN / app tokens → brand tokens ----------------
+   Only this block holds literal values that aren't in brand.css; every
+   component references these names. Values are contrast-checked against
+   navy #252C52 / surface #2B3360 / raised #323A6A:
+     text #FFF 13.4 / 12.0 / 10.8 · muted #C3C7DA 8.0 / 7.2 / 6.4
+     subtle #A9AECB 6.2 / 5.5 / 4.9 · accent #F494A9 6.2 / 5.5 / 5.0
+     danger #FFA39A 7.0 / 6.3 / 5.6 · line-strong (white 40%) 3.5 / 3.3 / 3.1
+     navy text on accent fill 6.2 · on accent-hover 4.8                      */
 :root {
-  /* Legacy font var aliases — all map to Google Sans Flex */
-  --font-inter: 'Google Sans Flex', system-ui, -apple-system, sans-serif;
-  --font-space-grotesk: 'Google Sans Flex', system-ui, -apple-system, sans-serif;
+  /* Body font: Google Sans Flex (Latin) → Rubik (Hebrew glyphs) */
+  --font-body: "Google Sans Flex", "Google Sans", "Rubik", "Heebo", system-ui, sans-serif;
 
-  --background: #080e2c;
-  --foreground: #f3eff8;
-  --card: #0d1638;
-  --card-foreground: #f3eff8;
-  --popover: #141e47;
-  --popover-foreground: #f3eff8;
-  --primary: #ff30c2;
-  --primary-foreground: #ffffff;
-  --secondary: #141e47;
-  --secondary-foreground: #f3eff8;
-  --muted: #141e47;
-  --muted-foreground: #8b88a0;
-  --accent: #3091ff;
-  --accent-foreground: #ffffff;
-  --destructive: #FF5A5F;
-  --border: rgba(243, 239, 248, 0.08);
-  --input: rgba(243, 239, 248, 0.06);
-  --ring: rgba(255, 48, 194, 0.5);
+  --qv-text-subtle: #A9AECB;
+  --qv-line-strong: rgb(255 255 255 / 0.4);
+  --qv-danger: #FFA39A;
+  --qv-primary-hover: var(--button-bg-hover);
+
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface-raised);
+  --popover-foreground: var(--color-text);
+  --primary: var(--button-bg);
+  --primary-foreground: var(--button-fg);
+  --secondary: var(--color-surface-raised);
+  --secondary-foreground: var(--color-text);
+  --muted: var(--color-surface);
+  --muted-foreground: var(--color-text-muted);
+  /* ShadCN "accent" is a hover surface for menu items, not the brand accent */
+  --accent: var(--color-surface-raised);
+  --accent-foreground: var(--color-text);
+  --destructive: var(--qv-danger);
+  --border: var(--color-border);
+  --input: var(--qv-line-strong);
+  --ring: var(--color-focus);
   --radius: 0.75rem;
-  --sidebar: #0d1638;
-  --sidebar-foreground: #f3eff8;
-  --sidebar-primary: #ff30c2;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #141e47;
-  --sidebar-accent-foreground: #f3eff8;
-  --sidebar-border: rgba(243, 239, 248, 0.06);
-  --sidebar-ring: rgba(255, 48, 194, 0.5);
+  --sidebar: var(--color-surface);
+  --sidebar-foreground: var(--color-text);
+  --sidebar-primary: var(--button-bg);
+  --sidebar-primary-foreground: var(--button-fg);
+  --sidebar-accent: var(--color-surface-raised);
+  --sidebar-accent-foreground: var(--color-text);
+  --sidebar-border: var(--color-border);
+  --sidebar-ring: var(--color-focus);
 }
 
-/* Force dark mode always */
+/* Navy-native dark theme is always on (set via data-theme on <html>) */
 .dark, :root {
   color-scheme: dark;
 }
@@ -97,11 +114,6 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    background: #080e2c;
-    background-image:
-      radial-gradient(ellipse at 20% 50%, rgba(48, 145, 255, 0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 20%, rgba(255, 48, 194, 0.05) 0%, transparent 40%);
-    background-attachment: fixed;
   }
 
   html {
@@ -110,50 +122,20 @@
   }
 }
 
-/* Neon glow utilities */
 @layer utilities {
-  .glow-magenta {
-    box-shadow: 0 0 12px rgba(255, 48, 194, 0.35), 0 0 30px rgba(255, 48, 194, 0.12);
-  }
-
-  .glow-blue {
-    box-shadow: 0 0 12px rgba(48, 145, 255, 0.35), 0 0 30px rgba(48, 145, 255, 0.12);
-  }
-
-  .glass {
-    background: rgba(13, 22, 56, 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(243, 239, 248, 0.08);
-  }
-
-  .gradient-text {
-    background: linear-gradient(135deg, #ff30c2, #3091ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .gradient-text-blue {
-    background: linear-gradient(135deg, #3091ff, #ff30c2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
+  /* Flat hover: border picks up the accent, surface lifts one step. No glow. */
   .card-hover {
-    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+    transition: border-color 150ms var(--ease), background-color 150ms var(--ease);
   }
 
   .card-hover:hover {
-    border-color: rgba(255, 48, 194, 0.3);
-    box-shadow: 0 0 0 1px rgba(255, 48, 194, 0.15), 0 4px 24px rgba(0, 0, 0, 0.4);
-    transform: translateY(-1px);
+    border-color: color-mix(in oklab, var(--brand-accent) 45%, transparent);
+    background-color: var(--color-surface-raised);
   }
 
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: rgba(243, 239, 248, 0.1) transparent;
+    scrollbar-color: var(--color-border) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -166,14 +148,13 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(243, 239, 248, 0.1);
+    background: var(--color-border);
     border-radius: 2px;
   }
 }
 
-/* Focus ring overrides for brand theme */
 :focus-visible {
-  outline: 2px solid rgba(255, 48, 194, 0.7);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -184,7 +165,7 @@
 }
 
 .quest-row:hover {
-  background-color: rgba(243, 239, 248, 0.03);
+  background-color: color-mix(in oklab, var(--color-text) 4%, transparent);
 }
 
 /* Skeleton shimmer */
@@ -196,9 +177,9 @@
 .skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    rgba(243, 239, 248, 0.04) 25%,
-    rgba(243, 239, 248, 0.08) 50%,
-    rgba(243, 239, 248, 0.04) 75%
+    color-mix(in oklab, var(--color-text) 4%, transparent) 25%,
+    color-mix(in oklab, var(--color-text) 8%, transparent) 50%,
+    color-mix(in oklab, var(--color-text) 4%, transparent) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;

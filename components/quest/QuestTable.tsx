@@ -39,7 +39,7 @@ export function QuestTable({ quests }: Props) {
       sortingFn: (rowA, rowB) =>
         compareQuestNumbers(rowA.original.questNumber, rowB.original.questNumber),
       cell: (info) => (
-        <span className="font-mono text-xs text-[#a9a4b8]">{info.getValue()}</span>
+        <span className="font-mono text-xs text-subtle">{info.getValue()}</span>
       ),
     }),
     col.accessor('title', {
@@ -47,7 +47,7 @@ export function QuestTable({ quests }: Props) {
       cell: (info) => {
         const quest = info.row.original;
         const title = (locale === 'he' && quest.titleHe) ? quest.titleHe : info.getValue();
-        return <span className="font-medium text-[#f3eff8] text-sm">{title}</span>;
+        return <span className="font-medium text-foreground text-sm">{title}</span>;
       },
     }),
     col.accessor('status', {
@@ -59,14 +59,14 @@ export function QuestTable({ quests }: Props) {
       header: t('table.start'),
       size: 110,
       cell: (info) => (
-        <span className="text-xs text-[#a9a4b8]">{formatDate(info.getValue())}</span>
+        <span className="text-xs text-muted-foreground">{formatDate(info.getValue())}</span>
       ),
     }),
     col.accessor('endDate', {
       header: t('table.end'),
       size: 110,
       cell: (info) => (
-        <span className="text-xs text-[#a9a4b8]">{formatDate(info.getValue())}</span>
+        <span className="text-xs text-muted-foreground">{formatDate(info.getValue())}</span>
       ),
     }),
     col.accessor('description', {
@@ -75,16 +75,16 @@ export function QuestTable({ quests }: Props) {
       cell: (info) => {
         const quest = info.row.original;
         const desc = (locale === 'he' && quest.descriptionHe) ? quest.descriptionHe : info.getValue();
-        if (!desc) return <span className="text-xs text-[#8b86a0]">—</span>;
+        if (!desc) return <span className="text-xs text-subtle">—</span>;
         const short = truncate(desc, 60);
-        if (desc.length <= 60) return <span className="text-xs text-[#a9a4b8]">{short}</span>;
+        if (desc.length <= 60) return <span className="text-xs text-muted-foreground">{short}</span>;
         return (
           <Tooltip>
-            <TooltipTrigger>
-              <span className="text-xs text-[#a9a4b8] cursor-default">{short}</span>
+            <TooltipTrigger className="text-start">
+              <span className="text-xs text-muted-foreground cursor-default">{short}</span>
             </TooltipTrigger>
             <TooltipContent
-              className="max-w-xs text-xs bg-[#141e47] text-[#f3eff8]"
+              className="max-w-xs text-xs bg-popover text-popover-foreground"
               sideOffset={4}
             >
               {desc}
@@ -100,7 +100,7 @@ export function QuestTable({ quests }: Props) {
       cell: (info) => {
         const quest = info.row.original;
         if (!quest.detailsUrl) {
-          return <span className="text-xs text-[#8b86a0]">—</span>;
+          return <span className="text-xs text-subtle">—</span>;
         }
         return (
           <a
@@ -108,7 +108,7 @@ export function QuestTable({ quests }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-1 text-xs font-medium text-[#3091ff] hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-medium text-foreground underline decoration-brand underline-offset-4 hover:text-brand"
             aria-label={`Open details for ${quest.title}`}
           >
             {t('table.view')}
@@ -124,7 +124,7 @@ export function QuestTable({ quests }: Props) {
       cell: (info) => {
         const quest = info.row.original;
         if (!quest.submissionUrl) {
-          return <span className="text-xs text-[#8b86a0]">—</span>;
+          return <span className="text-xs text-subtle">—</span>;
         }
         const late = isLateStatus(quest.status);
         return (
@@ -134,20 +134,11 @@ export function QuestTable({ quests }: Props) {
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             title={late ? t('hint.lateSubmission') : undefined}
-            className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-medium transition-all duration-150"
-            style={
+            className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors duration-150 ${
               late
-                ? {
-                    background: 'rgba(255, 176, 32, 0.1)',
-                    color: '#FFB020',
-                    border: '1px solid rgba(255, 176, 32, 0.3)',
-                  }
-                : {
-                    background: 'rgba(48, 145, 255, 0.1)',
-                    color: '#3091ff',
-                    border: '1px solid rgba(48, 145, 255, 0.3)',
-                  }
-            }
+                ? 'border-line-strong text-foreground hover:bg-foreground/5'
+                : 'border-primary bg-primary text-primary-foreground hover:bg-primary-hover hover:border-primary-hover'
+            }`}
             aria-label={
               late ? `Late submission for ${quest.title}` : `Submit ${quest.title}`
             }
@@ -170,29 +161,28 @@ export function QuestTable({ quests }: Props) {
   });
 
   return (
-    <div className="overflow-x-auto scrollbar-thin rounded-xl border border-[rgba(243,239,248,0.06)]">
+    <div className="overflow-x-auto scrollbar-thin rounded-xl border border-border">
       <table className="w-full border-collapse">
         <thead>
           {table.getHeaderGroups().map((hg) => (
             <tr
               key={hg.id}
-              className="border-b border-[rgba(243,239,248,0.06)]"
-              style={{ background: 'rgba(243,239,248,0.02)' }}
+              className="border-b border-border bg-card"
             >
               {hg.headers.map((header) => (
                 <th
                   key={header.id}
-                  className="px-4 py-3 text-start text-[10px] font-semibold uppercase tracking-wider text-[#a9a4b8] whitespace-nowrap"
+                  className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-subtle whitespace-nowrap"
                   style={{ width: header.getSize() }}
                 >
                   {header.isPlaceholder ? null : (
                     <button
-                      className={`flex items-center gap-1 ${header.column.getCanSort() ? 'cursor-pointer hover:text-[#c9c5d4] transition-colors' : ''}`}
+                      className={`flex items-center gap-1 ${header.column.getCanSort() ? 'cursor-pointer hover:text-foreground transition-colors' : ''}`}
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getCanSort() && (
-                        <span className="text-[#8b86a0]">
+                        <span className="text-subtle">
                           {header.column.getIsSorted() === 'asc' ? (
                             <ChevronUp className="h-3 w-3" />
                           ) : header.column.getIsSorted() === 'desc' ? (
@@ -216,16 +206,11 @@ export function QuestTable({ quests }: Props) {
             <tr
               key={row.id}
               onClick={() => openQuestDrawer(row.original)}
-              className="quest-row border-b border-[rgba(243,239,248,0.03)]"
-              style={
+              className={`quest-row border-b border-border last:border-b-0 ${
                 isActive
-                  ? {
-                      background:
-                        'linear-gradient(90deg, rgba(255,48,194,0.1), rgba(48,145,255,0.1))',
-                      boxShadow: 'inset 3px 0 0 #ff30c2',
-                    }
-                  : undefined
-              }
+                  ? 'bg-brand/[0.07] shadow-[inset_3px_0_0_var(--brand-accent)] rtl:shadow-[inset_-3px_0_0_var(--brand-accent)]'
+                  : ''
+              }`}
             >
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id} className="px-4 py-3.5 align-middle">
@@ -239,7 +224,7 @@ export function QuestTable({ quests }: Props) {
       </table>
 
       {quests.length === 0 && (
-        <div className="py-12 text-center text-sm text-[#a9a4b8]">{t('empty.title')}</div>
+        <div className="py-12 text-center text-sm text-subtle">{t('empty.title')}</div>
       )}
     </div>
   );
