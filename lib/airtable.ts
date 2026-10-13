@@ -17,6 +17,9 @@ function getBase() {
   return new Airtable({ apiKey }).base(baseId);
 }
 
+/** Airtable column holding the Monday "Academy Type" (Quest / Academy Quest). */
+const TYPE_FIELD = 'Type';
+
 const QuestsTable = () => getBase()('Quests');
 const AssetsTable = () => getBase()('Assets');
 const CategoriesTable = () => getBase()('Categories');
@@ -44,7 +47,7 @@ function parseQuest(record: Airtable.Record<Airtable.FieldSet>): Quest {
     detailsUrl: (f['detailsUrl'] as string) ?? undefined,
     submissionUrl: (f['submissionUrl'] as string) ?? undefined,
     // Records synced before the Academy split have no value — they are regular Quests
-    academyType: ((f['academyType'] as string) || 'Quest') as Quest['academyType'],
+    academyType: ((f[TYPE_FIELD] as string) || 'Quest') as Quest['academyType'],
     updatedAt: (f['updatedAt'] as string) ?? new Date().toISOString(),
     createdAt: (f['createdAt'] as string) ?? new Date().toISOString(),
   };
@@ -339,7 +342,7 @@ export async function upsertQuestsFromMonday(rows: SyncQuestRow[]): Promise<{
     if (row.creatorLinkedin) fields.creatorLinkedin = row.creatorLinkedin;
     if (row.detailsUrl) fields.detailsUrl = row.detailsUrl;
     if (row.submissionUrl) fields.submissionUrl = row.submissionUrl;
-    if (row.academyType) fields.academyType = row.academyType;
+    if (row.academyType) fields[TYPE_FIELD] = row.academyType;
     return fields;
   };
 
@@ -365,10 +368,10 @@ export async function upsertQuestsFromMonday(rows: SyncQuestRow[]): Promise<{
       if (!mondayIdFieldMissing && isUnknownFieldError(err, 'mondayId')) {
         mondayIdFieldMissing = true;
         await doWrite(false);
-      } else if (isUnknownFieldError(err, 'academyType')) {
+      } else if (isUnknownFieldError(err, TYPE_FIELD)) {
         // Without it, Academy quests would silently show up on /quests
         throw new Error(
-          "Airtable has no 'academyType' field — add a single-select field named academyType (options: Quest, Academy Quest) to the Quests table, then sync again."
+          `Airtable has no '${TYPE_FIELD}' field — add a single-select field named ${TYPE_FIELD} (options: Quest, Academy Quest) to the Quests table, then sync again.`
         );
       } else {
         throw err;

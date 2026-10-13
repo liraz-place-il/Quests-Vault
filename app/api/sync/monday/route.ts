@@ -23,9 +23,9 @@ function parseTimeline(text?: string): { start?: string; end?: string } {
   return {};
 }
 
-/** Extract "Quest #3" -> "Q3" from an item name like "Quest #3 - Automation". */
+/** Extract "Q3" from "Quest #3 - Automation" or "Quest Academy #3 - Agents". */
 function extractQuestNumber(name: string): string | undefined {
-  const match = name.match(/quest\s*#?\s*(\d+)/i);
+  const match = name.match(/quest\s*(?:academy\s*)?#?\s*(\d+)/i);
   return match ? `Q${match[1]}` : undefined;
 }
 
